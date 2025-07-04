@@ -1,0 +1,1 @@
+taskset -c 0-40 python src/evaluation/conditional/evaluate_confseq.py --method rdkit --posebusters

@@ -1,0 +1,48 @@
+# train_data: 'data/QM9/qm9_TDsmiles/qm9_train_augmode0_augtimes1_angles.pkl'
+# valid_data: 'data/QM9/qm9_TDsmiles/qm9_valid.pkl'
+train_data: 'data/geom/geom_TDsmiles/geomdrugs_train_augmode1_augtimes5_angles.pkl'
+valid_data: 'data/geom/geom_TDsmiles/geomdrugs_valid.pkl'
+
+model:
+  bart:
+    max_position_embeddings: 512
+    d_model: 768
+    encoder_layers: 0
+    decoder_layers: 6
+    encoder_attention_heads: 0
+    decoder_attention_heads: 8
+    encoder_ffn_dim: 0
+    decoder_ffn_dim: 3072
+  generation_config:
+    do_sample: true
+    max_length: 512 # TODO: this should be the same as max_position_embeddings
+    top_k: 50
+    top_p: 1.0
+    temperature: 1.0
+    num_return_sequences: 1
+
+
+train:
+  device: '4,5' # TODO: need to change to change every time
+  resume_path: 'checkpoints/unconditional/pretrain_pubchem-0414/checkpoint-230000'
+  output_dir: './checkpoints/unconditional/fintune-geom-0417'  #TODO: need to change every time
+  overwrite_output_dir: True
+  num_train_epochs: 20
+  per_device_train_batch_size: 512
+  per_device_eval_batch_size: 512
+  dataloader_num_workers: 20
+  save_total_limit: 5
+  logging_steps: 50  
+  eval_strategy: 'steps'  
+  eval_steps: 2500 
+  do_eval: True
+  learning_rate: 1e-4  
+  warmup_ratio: 0.1  
+  save_strategy: 'steps'  
+  save_steps: 2500
+  load_best_model_at_end: True
+  logging_first_step: True
+  bf16: True
+  early_stopping_patience: 10
+  early_stopping_threshold: 0.0
+

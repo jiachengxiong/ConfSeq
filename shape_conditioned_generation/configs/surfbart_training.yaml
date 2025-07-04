@@ -1,0 +1,59 @@
+data:
+  data_dir: 'data/geom_shape/pointcloud_train_samples1024_augmode0_augtimes1_lmdb'
+  train_smiles_dir: 'data/geom_shape/train_smiles.pkl'
+  use_smiles: True  # Whether to use SMILES data
+  num_workers: 40  # Number of workers for data loading
+
+model:
+  surf:
+    n: 2
+    normal_channel: True
+  mlp:
+    hidden_dim: 256  # Hidden dimension for MLP
+    output_dim: 768  # Output dimension for MLP
+    num_layers: 3  # Number of layers in MLP
+    dropout_rate: 0.2  # Dropout rate in MLP
+    activation_function: "relu"  # Activation function for MLP
+  bart:
+    max_position_embeddings: 512
+    d_model: 768
+    encoder_layers: 0
+    decoder_layers: 6
+    encoder_attention_heads: 0
+    decoder_attention_heads: 8
+    encoder_ffn_dim: 0
+    decoder_ffn_dim: 3072
+    activation_function: 'gelu'
+  generation_config:
+    do_sample: true
+    max_length: 512
+    top_k: 50
+    top_p: 1.0
+    temperature: 1.0
+    num_return_sequences: 50
+
+train:
+  output_dir: "./checkpoints/conditional/shape-geom-smiles-0520"  # TODO: Directory to save model and checkpoints
+  resume_path: null
+  overwrite_output_dir: true  # Whether to overwrite existing outputs
+  num_train_epochs: 50  # Total number of training epochs
+  per_device_train_batch_size: 150  # Training batch size per device
+  per_device_eval_batch_size: 4  # Evaluation batch size per device
+  dataloader_num_workers: 10 # Number of workers for data loading
+  save_total_limit: 10  # Maximum number of checkpoints to keep
+  logging_steps: 50  # Steps interval for logging
+  eval_strategy: "steps"  # Evaluation strategy (e.g., "steps", "epoch")
+  eval_steps: 2500  # Evaluation frequency (in steps)
+  do_eval: true  # Whether to perform evaluation
+  learning_rate: 1e-4  # Initial learning rate
+  warmup_ratio: 0.1  # Warm-up ratio for learning rate scheduler
+  save_strategy: "steps"  # Save strategy (e.g., "steps", "epoch")
+  save_steps: 2500  # Save frequency (in steps)
+  load_best_model_at_end: true  # Load the best model at the end of training
+  logging_first_step: true  # Log the first training step
+  bf16: True # Whether to use bf16 precision
+  early_stopping_patience: 10  # Patience for early stopping callback
+  early_stopping_threshold: 0  # Threshold for early stopping
+  seed: 42
+
+

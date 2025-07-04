@@ -1,0 +1,20 @@
+save_path: 'results/unconditional/GEOM/bart-finetune/sample0'
+device: 6
+sample_times: 3
+seed: 42
+model_path: 'checkpoints/unconditional/fintune-geom-0416/checkpoint-80000'
+num_samples: 10000
+scale_times: 1
+batch_size: 100
+num_workers: 10
+chunksize: 10
+upscale_temp: 1.0
+downscale_temp: 1.0
+
+
+generation_config:
+  max_length: 512
+  temperature: 1.0
+  do_sample: True
+  top_k: 50
+  top_p: 1.0
