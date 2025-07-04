@@ -39,8 +39,8 @@ def main():
                             do_random=args.do_random)
         
         for result in results:
-            if result != '':
-                TD_smiles.append(result.split('\t')[2])
+            if result != 'error':
+                TD_smiles.append(result)
 
     # save the TD SMILES
     split = args.input_dir.split('/')[-1].split('.')[0]

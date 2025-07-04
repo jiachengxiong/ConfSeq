@@ -1,14 +1,4 @@
-from tqdm import tqdm
-import random
-from rdkit import Chem, RDLogger
-from rdkit.Chem import rdMolTransforms
 from rdkit.Chem.rdMolTransforms import GetBondLength, GetAngleDeg, GetDihedralDeg
-from src.utils.mmd import compute_mmd
-import torch
-import time
-import numpy as np
-import os
-import pickle
 from functools import partial
 from tqdm.contrib.concurrent import process_map
 
@@ -255,30 +245,6 @@ def get_triple_bond_symbol(triple_bonds):
     return sym, ijkl
 
 
-# def worker_dihedral(mol, top_dihedral_syms):
-#     """
-#     针对单个分子计算各指定二面角的角度信息。
-
-#     参数：
-#         mol: 单个分子对象。
-#         top_dihedral_syms (iterable): 需要统计二面角的二面角符号集合或列表。
-
-#     返回：
-#         dict: 一个字典，其中键为二面角符号，值为该分子中对应的二面角角度列表。
-#     """
-#     dihedral_dict = {dihedral_sym: [] for dihedral_sym in top_dihedral_syms}
-#     conf = mol.GetConformer()
-#     triple_bonds = get_triple_bonds(mol)
-#     for triple_bond in triple_bonds:
-#         dihedral_sym, ijkl = get_triple_bond_symbol(triple_bond)
-#         i, j, k, l = ijkl
-#         # 获取反向的二面角符号
-#         reverse_dihedral_sym, _ = get_triple_bond_symbol(triple_bond[::-1])
-#         if dihedral_sym in top_dihedral_syms:
-#             dihedral_dict[dihedral_sym].append(GetDihedralDeg(conf, i, j, k, l))
-#         elif reverse_dihedral_sym in top_dihedral_syms:
-#             dihedral_dict[reverse_dihedral_sym].append(GetDihedralDeg(conf, l, k, j, i))
-#     return dihedral_dict
 def worker_dihedral(mol, top_dihedral_syms):
     """
     Calculates specified dihedral angles for a single molecule,
@@ -332,9 +298,9 @@ def worker_dihedral(mol, top_dihedral_syms):
         reverse_dihedral_sym, _ = get_triple_bond_symbol(triple_bond[::-1])
 
         if dihedral_sym in top_dihedral_syms:
-            dihedral_dict[dihedral_sym].append(rdMolTransforms.GetDihedralDeg(conf, i, j, k, l))
+            dihedral_dict[dihedral_sym].append(GetDihedralDeg(conf, i, j, k, l))
         elif reverse_dihedral_sym in top_dihedral_syms:
-            dihedral_dict[reverse_dihedral_sym].append(rdMolTransforms.GetDihedralDeg(conf, i, j, k, l))
+            dihedral_dict[reverse_dihedral_sym].append(GetDihedralDeg(conf, i, j, k, l))
             
     return dihedral_dict
 
@@ -367,97 +333,3 @@ def cal_dihedral_angle(mol_list, top_dihedral_syms, max_workers=20, chunksize=10
     
     return dihedral_angle_dict
 
-
-def load_target_geometry(mols, info, dataset_root):
-    """Save and load target geometry statistic"""
-    file_path = os.path.join(dataset_root, 'target_geometry_stat.pkl')
-    # if file exist, load pickle
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as f:
-            geo_stat = pickle.load(f)
-        return geo_stat
-    # if file not exist, calculate statistic
-    print('Calculating bond distance...')
-    bond_dict = cal_bond_distance(mols, info['top_bond_sym'])
-    print('Calculating bond angle...')
-    angle_dict = cal_bond_angle(mols, info['top_angle_sym'])
-    print('Calculating dihedral angle...')
-    dihedral_dict = cal_dihedral_angle(mols, info['top_dihedral_sym'])
-
-    geo_stat = {**bond_dict, **angle_dict, **dihedral_dict}
-    with open(file_path, 'wb') as f:
-        pickle.dump(geo_stat, f)
-    return geo_stat
-
-
-# pipeline for dataset bound
-def report_dataset_bound(trains, tests, cal_fn, top_geometry):
-    res_dict = dict()
-    for sym in top_geometry:
-        res_dict[sym] = []
-
-    target_geo = cal_fn(tests, top_geometry)
-    for i in range(5):
-        print(i)
-        random_trains = random.sample(trains, 10000)
-        train_geo = cal_fn(random_trains, top_geometry)
-        for sym in top_geometry:
-            time1 = time.time()
-            tar = target_geo[sym]
-            des = train_geo[sym]
-            if len(tar) > 20000:
-                tar = random.sample(tar, 20000)
-            if len(des) > 20000:
-                des = random.sample(des, 20000)
-            res_dict[sym].append(compute_mmd(
-                torch.tensor(des), torch.tensor(tar), batch_size=10000))
-            time2 = time.time()
-            if i == 0:
-                print(sym, len(train_geo[sym]), len(target_geo[sym]), 'time:', time2- time1)
-
-    for sym in top_geometry:
-        print(sym, np.mean(res_dict[sym]), np.std(res_dict[sym]))
-
-
-def compute_geo_mmd(gen_mols, tar_geo, cal_fn, top_geo_syms, mean_name):
-    res_dict = dict()
-    gen_geo = cal_fn(gen_mols, top_geo_syms)
-    for geo_sym in tqdm(top_geo_syms):
-        tar = tar_geo[geo_sym]
-        gen = gen_geo[geo_sym]
-        if len(gen) == 0:
-            res_dict[geo_sym] = float('nan')
-            continue
-        if len(tar) > 20000:
-            tar = random.sample(tar, 20000)
-        if len(gen) > 20000:
-            gen = random.sample(gen, 20000)
-        try:
-            res_dict[geo_sym] = compute_mmd(torch.tensor(gen), torch.tensor(tar), batch_size=10000)
-        except:
-            res_dict[geo_sym] = float('nan')
-
-    res_dict[mean_name] = np.nanmean(list(res_dict.values()))
-    return res_dict
-
-
-# get sub geometry eval func
-def get_sub_geometry_metric(test_mols, dataset_info, root_path):
-    tar_geo_stat = load_target_geometry(test_mols, dataset_info, root_path)
-    print('Target geometry statistic loaded.')
-
-    def sub_geometry_metric(gen_mols):
-        print('Calculating bond length mmd...')
-        bond_length_dict = compute_geo_mmd(gen_mols, tar_geo_stat, cal_bond_distance,
-                                           dataset_info['top_bond_sym'], mean_name='bond_length_mean')
-        print('Calculating bond angle mmd...')
-        bond_angle_dict = compute_geo_mmd(gen_mols, tar_geo_stat, cal_bond_angle,
-                                          dataset_info['top_angle_sym'], mean_name='bond_angle_mean')
-        print('Calculating dihedral angle mmd...')
-        dihedral_angle_dict = compute_geo_mmd(gen_mols, tar_geo_stat, cal_dihedral_angle,
-                                              dataset_info['top_dihedral_sym'], mean_name='dihedral_angle_mean')
-        metric = {**bond_length_dict, **bond_angle_dict, **dihedral_angle_dict}
-
-        return metric
-
-    return sub_geometry_metric

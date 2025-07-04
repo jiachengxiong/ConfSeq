@@ -52,8 +52,5 @@ bash scripts/sample_confseq.sh
 ## Evaluation
 
 We utilize the ShaEP software to calculate the shape similarity between the generated molecules and the reference molecules. You can download the ShaEP software from [this link](https://users.abo.fi/mivainio/shaep/index.php) or use the software provided in the `software` directory.
-To evaluate the quality of generated molecules, use the following command:
 
-```bash
-bash scripts/evaluate_confseq.sh
-```
+To evaluate the quality of generated molecules, please refer to the `notebook` directory, which contains Jupyter notebooks for evaluating the generated molecules.

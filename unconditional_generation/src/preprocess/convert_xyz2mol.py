@@ -73,6 +73,10 @@ def main():
 
     train_data, val_data, test_data = load_split_data(args.geom_file)
 
+    os.makedirs('./tmp', exist_ok=True)
+    os.makedirs('./data/geom_sdf', exist_ok=True)
+
+    print('Converting train, val, and test data to sdf format...')
     convert_and_cleanup(train_data, './tmp/train_original.xyz', './data/geom_sdf/train.sdf')
     print('Successfully converted train data to sdf.')
     convert_and_cleanup(val_data, './tmp/val_original.xyz', './data/geom_sdf/valid.sdf')

@@ -70,7 +70,6 @@ def main():
         basic_metrics = compute_basic_metrics_confseq(
                 gen_smiles, 
                 train_smiles=train_smiles, 
-                test_smiles=None,
                 num_samples=len(gen_smiles)
             )
         logger.info(f"Basic metrics computed: {basic_metrics}")

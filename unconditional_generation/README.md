@@ -32,7 +32,7 @@ Upon successful execution, the processed dataset will be available at `data/geom
 > \[!CAUTION]
 > We utilize the **BART** architecture for unconditional molecular generation. However, when training with `BartForCausalLM` (BART’s decoder), we encountered abnormally low training and validation losses (\~1e-6). This issue is documented in [this GitHub thread](https://github.com/huggingface/transformers/issues/27517).
 >
-> To address it, we modified the source code of `transformers` accordingly. If you wish to retrain our model, please apply the modifications described in the GitHub issue or refer directly to our modified [source code](https://github.com/huggingface/transformers/blob/main/src/transformers/models/bart/modeling_bart.py).
+> To address it, we modified the source code of `transformers` accordingly. If you wish to retrain our model, please apply the modifications described in the GitHub issue and modify the loss calculation part of `BartForCausalLM` [source code](https://github.com/huggingface/transformers/blob/main/src/transformers/models/bart/modeling_bart.py).
 
 To train the unconditional generation model, run:
 
@@ -40,7 +40,7 @@ To train the unconditional generation model, run:
 bash scripts/train_bartforcausallm.sh
 ```
 
-A pre-trained model checkpoint is also available for download [here](mylink).
+A pre-trained model checkpoint is also available for download [here](mylink). Please download and put it in the `checkpoints` directory.
 
 ## Molecule Generation
 
