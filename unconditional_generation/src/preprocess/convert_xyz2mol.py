@@ -68,16 +68,16 @@ def convert_and_cleanup(data, xyz_path, sdf_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--geom_file', type=str, default='./data/geom/geom_raw/geom_drugs_30.npy', help='Path to the splited geom file')
+    parser.add_argument('--geom_file', type=str, default='./data/geom_raw/geom_drugs_30.npy', help='Path to the splited geom file')
     args = parser.parse_args()
 
     train_data, val_data, test_data = load_split_data(args.geom_file)
 
-    convert_and_cleanup(train_data, './tmp/train_original.xyz', './data/geom/geom_sdf/train.sdf')
+    convert_and_cleanup(train_data, './tmp/train_original.xyz', './data/geom_sdf/train.sdf')
     print('Successfully converted train data to sdf.')
-    convert_and_cleanup(val_data, './tmp/val_original.xyz', './data/geom/geom_sdf/valid.sdf')
+    convert_and_cleanup(val_data, './tmp/val_original.xyz', './data/geom_sdf/valid.sdf')
     print('Successfully converted valid data to sdf.')
-    convert_and_cleanup(test_data, './tmp/test_original.xyz', './data/geom/geom_sdf/test.sdf')
+    convert_and_cleanup(test_data, './tmp/test_original.xyz', './data/geom_sdf/test.sdf')
     print('Successfully converted test data to sdf.')
 
 if __name__ == '__main__':
