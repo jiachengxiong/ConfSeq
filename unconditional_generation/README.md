@@ -1,18 +1,16 @@
 # ConfSeq - Unconditional Generation
 
-This is the directory for the unconditional generation part of ConfSeq. It contains the code and configuration files necessary to train and evaluate the model.
+This directory contains the code and configuration files for the unconditional molecular generation module of **ConfSeq**.
 
-## Environment
+> \[!NOTE]
+> Execute all commands below inside the `confseq` conda environment. Make sure your working directory is set to `unconditional_generation`.
 
-To set up the environment for running the unconditional generation model, you need to install the following dependencies:
+## Data Preparation
 
-> [!NOTE] All the following commands should be run in the `confseq` conda environment and the working directory should be `unconditional_generation`.
+We employ the **GEOM-Drugs** dataset for unconditional molecular generation, following the same data split strategy as in the [EDM paper](https://arxiv.org/abs/2203.17003).
 
-## Data preparation
+To download and preprocess the dataset:
 
-We adopted GEOM-Drugs dataset for unconditional molecule generation. We used the same data split as in the [EDM paper](https://arxiv.org/abs/2203.17003).
-
-First download the dataset and extract conformers following EDM:
 ```bash
 cd data/geom_raw
 wget https://dataverse.harvard.edu/api/access/datafile/4360331
@@ -21,35 +19,41 @@ cd ../..
 python src/preprocess/build_geom_dataset.py
 ```
 
-Then we need to process the dataset to obtain ConfSeq representations of the molecules. This can be done using the following command:
+Next, process the dataset to obtain the ConfSeq representations by executing:
+
 ```bash
 bash scripts/preprocess.sh
 ```
 
-The scripts above should get us the processed dataset in `data/geom_confseq`. The processed dataset will be used for training and evaluation. The processed datasets are also available [here](mylink).
+Upon successful execution, the processed dataset will be available at `data/geom_confseq`. This dataset will serve as the input for training and evaluation. Alternatively, you can download the processed datasets directly from [this link](mylink).
 
+## Model Training
 
-## Training the unconditional generation model
+> \[!CAUTION]
+> We utilize the **BART** architecture for unconditional molecular generation. However, when training with `BartForCausalLM` (BART’s decoder), we encountered abnormally low training and validation losses (\~1e-6). This issue is documented in [this GitHub thread](https://github.com/huggingface/transformers/issues/27517).
+>
+> To address it, we modified the source code of `transformers` accordingly. If you wish to retrain our model, please apply the modifications described in the GitHub issue or refer directly to our modified [source code](https://github.com/huggingface/transformers/blob/main/src/transformers/models/bart/modeling_bart.py).
 
-> [!CAUTION]
-> We chose BART as the model architecture for unconditional molecular generation. However, when we use `BartForCausalLM`(the decoder part of BART), we found that the training and validation loss are really low (about 1e-6). We found this [issue](https://github.com/huggingface/transformers/issues/27517) on GitHub, and change the source code of `transformers`[(code)](https://github.com/huggingface/transformers/blob/main/src/transformers/models/bart/modeling_bart.py) to fix this issue. Those who want to retrain our model should modify the source code of `transformers` according to the issue mentioned above.
+To train the unconditional generation model, run:
 
-One can easily train the unconditional generation model using the following command:
 ```bash
 bash scripts/train_bartforcausallm.sh
 ```
-We also provide a pre-trained model checkpoint for the unconditional generation task. You can download it from [here](mylink).
 
-## Generation
+A pre-trained model checkpoint is also available for download [here](mylink).
 
-To generate molecules using the trained model, you can use the following command:
+## Molecule Generation
+
+To generate molecules using the trained model, execute:
+
 ```bash
 bash scripts/sample.sh
 ```
 
 ## Evaluation
 
-To evaluate the generated molecules, you can use the following command:
+To evaluate the quality of generated molecules, use the following command:
+
 ```bash
 bash scripts/evaluate_confseq.sh
 ```
