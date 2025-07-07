@@ -1,12 +1,8 @@
-Certainly. Here’s a polished, professionally structured version of your README in English, organized for clarity and precision:
-
----
-
 # ConfSeq - Unconditional Molecular Generation
 
 This directory contains the code and configuration files for the unconditional molecular generation module of **ConfSeq**.
 
-> \[!Note]
+> [!Note]
 > Ensure all commands below are executed inside the `confseq` Conda environment, with your working directory set to `unconditional_generation`.
 
 ---
@@ -37,7 +33,7 @@ Upon successful execution, the processed dataset will be available in `data/geom
 
 ## 🏋️ Model Training
 
-> \[!CAUTION]
+> [!CAUTION]
 > We employ the **BART** architecture for unconditional molecular generation. However, when using `BartForCausalLM` (BART’s decoder-only model), abnormally low training and validation losses (\~1e-6) were observed. This issue is documented in [this GitHub discussion](https://github.com/huggingface/transformers/issues/27517).
 >
 > To resolve this, modifications to the `transformers` library source code are required. If you intend to retrain the model, please refer to the GitHub thread and update the loss calculation section in the `BartForCausalLM` implementation, found in the [official source code](https://github.com/huggingface/transformers/blob/main/src/transformers/models/bart/modeling_bart.py).
@@ -99,8 +95,3 @@ To evaluate the basic quality of the generated molecules, use:
 bash scripts/evaluate_confseq.sh
 ```
 
-For more detailed evaluation and visualization, please refer to the contents of the `notebook` directory.
-
----
-
-Would you like a version with Markdown enhancements, such as emojis or advanced formatting?

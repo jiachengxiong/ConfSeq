@@ -4,7 +4,7 @@ This directory contains the code and configuration files for the **shape-conditi
 
 ![Overview](./assets/overview.png)
 
-> **Note**
+> [!Note]
 > All commands below must be executed inside the `confseq` Conda environment. Ensure your working directory is set to `shape_conditioned_generation`.
 
 ---
@@ -23,7 +23,7 @@ We adopt the **MOSES** dataset for unconditional molecular generation, following
    bash scripts/preprocess.sh
    ```
 
-> ![Caution]
+> [!Caution]
 > During point cloud sampling, issues may arise with the `oddt` library. To avoid these, modify the source code of `oddt`. Specifically, open the definition of `oddt.surface.generate_surface_marching_cubes` and replace:
 >
 > ```python

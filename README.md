@@ -34,7 +34,8 @@ pip install oddt
 pip install ./shape_conditioned_generation/src/model/pointops
 ```
 
-> **Note**: If you encounter a CUDA version mismatch, set the following environment variables to match your installed CUDA version:
+> [!NOTE]
+> If you encounter a CUDA version mismatch, set the following environment variables to match your installed CUDA version:
 >
 > ```bash
 > export PATH=/usr/local/cuda-12.9/bin:$PATH
