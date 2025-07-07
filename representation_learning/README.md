@@ -13,6 +13,17 @@ Additionally, molecular pair similarity data for model training are generated us
 
 Raw and processed datasets can be downloaded from [this link](mylink).
 
+After downloading, extract the archive and place its contents inside the `data` folder.  
+The expected folder structure is as follows:
+
+```
+data/
+├── DUDE/
+├── PCBA/
+├── PDB/
+└── Pairwise_molecular_similarity/
+```
+
 ---
 ## 🏋️ Model Training
 
