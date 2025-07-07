@@ -1,51 +1,69 @@
 # ConfSeq
 
-This is the official repository for the paper:
+This repository accompanies the paper
 **“Bridging 3D Molecular Structures and Artificial Intelligence by a Conformation Description Language.”**
 
 ![Overview](./assets/overview.png)
 
-We also provide the ready-to-use ConfSeq-series models online at [Sciminer](https://sciminer.protonunfold.com/), including:
-- **Molecular conformation generation**: [ConfSeq-Conf-Gen](https://sciminer.protonunfold.com/utility?tool=Confseq%20Conf%20Gen).
-- **Shape-conditioned Generation**: [ConfSeq-Shape-Gen](https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Gen).
-- **ConfSeq based Shape Screening**: [ConfSeq-Shape-Screen](https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Screen).
-  
+We provide ready-to-use ConfSeq-series models online at [Sciminer](https://sciminer.protonunfold.com/), including:
+
+* **Molecular Conformation Generation**: [ConfSeq-Conf-Gen](https://sciminer.protonunfold.com/utility?tool=Confseq%20Conf%20Gen)
+* **Shape-conditioned Generation**: [ConfSeq-Shape-Gen](https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Gen)
+* **Shape Screening Based on ConfSeq**: [ConfSeq-Shape-Screen](https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Screen)
+
 ---
 
 ## 📦 Environment Setup
 
-It is recommended to use a Conda environment to install the required dependencies. The following commands will create a new Conda environment named `test` with Python 3.11 and CUDA 12.6, and install the necessary packages for running ConfSeq models.
+We strongly recommend creating a dedicated Conda environment to manage dependencies. Execute the following commands to create an environment named `confseq` with Python 3.11 and install all required packages:
 
 ```bash
-conda create -n test python=3.11
-conda activate test
+conda create -n confseq python=3.11 -y
+conda activate confseq
 
-conda install pytorch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 pytorch-cuda=12.4 -c pytorch -c nvidia
-pip install rdkit==2025.3.2 transformers==4.50 accelerate
+conda install pytorch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 pytorch-cuda=12.4 -c pytorch -c nvidia -y
+
+pip install rdkit==2024.9.3 transformers==4.50 accelerate
 pip install jupyter epam.indigo smilesPE posebusters timeout_decorator fcd_torch easydict py3dmol swanlab lmdb scikit-image matplotlib seaborn
-conda install openbabel -c conda-forge
-conda install ninja
+
+conda install openbabel -c conda-forge -y
+conda install ninja -y
+
 pip install "git+https://github.com/facebookresearch/pytorch3d.git"
 pip install oddt
-export PATH=/usr/local/cuda-12.9/bin:$PATH  # only if you encountered CUDA version mismatch
-export LD_LIBRARY_PATH=/usr/local/cuda-12.9/lib64:$LD_LIBRARY_PATH  # only if you encountered CUDA version mismatch
 pip install ./shape_conditioned_generation/src/model/pointops
 ```
-We also provide a conda-packed environment in [this link](mylink) for easy setup. You can download the file and run the following command to create the environment:
 
+> **Note**: If you encounter a CUDA version mismatch, set the following environment variables to match your installed CUDA version:
+>
+> ```bash
+> export PATH=/usr/local/cuda-12.9/bin:$PATH
+> export LD_LIBRARY_PATH=/usr/local/cuda-12.9/lib64:$LD_LIBRARY_PATH
+> ```
+>
+> If you experience issues installing `pointops`, refer to the [Pointcept issue page](https://github.com/Pointcept/Pointcept/issues) for troubleshooting.
 
-## Demo
+Alternatively, a pre-packaged Conda environment is available [here](mylink) for streamlined installation.
 
-We provide a demo notebook in `demo` directory on how to use convert a 3D molecule into a ConfSeq sequence and vise versa. The detailed algorithm of ConfSeq can be found at `demo/ConfSeq.py`.
+---
+
+## 📝 Demo
+
+A demonstration notebook illustrating how to convert a 3D molecule to a ConfSeq sequence and reconstruct it back is provided in the `demo` directory. The core implementation of the ConfSeq algorithm is located in `demo/ConfSeq.py`.
+
+---
+
+## 📦 Storage
+
+The datasets and pretrained model checkpoints are hosted at [this Zenodo link](link).
 
 ---
 
 ## 🚀 Running the Models
 
-The ConfSeq-series models are organized into subdirectories, each corresponding to a specific task mentioned in the paper.
-The core algorithm 
+The ConfSeq-series models are organized into subdirectories, each corresponding to a specific task described in the paper. Each subdirectory contains a `README.md` with detailed usage instructions.
 
-Please refer to the `README.md` file within each subdirectory for detailed instructions on running the respective models.
+Please refer to these documents to run individual models.
 
 ---
 
@@ -57,7 +75,7 @@ Please refer to the `README.md` file within each subdirectory for detailed instr
 
 ## 📖 Citation
 
-If you find this code useful for your research, please cite our paper:
+If you find this code helpful for your research, please cite our paper:
 
 ```bibtex
 @article{Xiong2025.05.07.652440,

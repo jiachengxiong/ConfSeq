@@ -1,15 +1,21 @@
-# ConfSeq - Unconditional Generation
+Certainly. Here’s a polished, professionally structured version of your README in English, organized for clarity and precision:
+
+---
+
+# ConfSeq - Unconditional Molecular Generation
 
 This directory contains the code and configuration files for the unconditional molecular generation module of **ConfSeq**.
 
-> \[!NOTE]
-> Execute all commands below inside the `confseq` conda environment. Make sure your working directory is set to `unconditional_generation`.
+> \[!Note]
+> Ensure all commands below are executed inside the `confseq` Conda environment, with your working directory set to `unconditional_generation`.
 
-## Data Preparation
+---
 
-We employ the **GEOM-Drugs** dataset for unconditional molecular generation, following the same data split strategy as in the [EDM paper](https://arxiv.org/abs/2203.17003).
+## 📦 Data Preparation
 
-To download and preprocess the dataset:
+We utilize the **GEOM-Drugs** dataset for unconditional molecular generation, adopting the same data split strategy as described in the [EDM paper](https://arxiv.org/abs/2203.17003).
+
+To download and preprocess the dataset, execute the following commands:
 
 ```bash
 cd data/geom_raw
@@ -19,20 +25,51 @@ cd ../..
 python src/preprocess/build_geom_dataset.py
 ```
 
-Next, process the dataset to obtain the ConfSeq representations by executing:
+Next, generate the ConfSeq representations with:
 
 ```bash
 bash scripts/preprocess.sh
 ```
 
-Upon successful execution, the processed dataset will be available at `data/geom_confseq`. This dataset will serve as the input for training and evaluation. Alternatively, you can download the processed datasets directly from [this link](mylink).
+Upon successful execution, the processed dataset will be available in `data/geom_confseq`, which serves as the input for model training and evaluation. Alternatively, you may download the preprocessed dataset directly from [this link](mylink).
 
-## Model Training
+---
+
+## 🏋️ Model Training
 
 > \[!CAUTION]
-> We utilize the **BART** architecture for unconditional molecular generation. However, when training with `BartForCausalLM` (BART’s decoder), we encountered abnormally low training and validation losses (\~1e-6). This issue is documented in [this GitHub thread](https://github.com/huggingface/transformers/issues/27517).
+> We employ the **BART** architecture for unconditional molecular generation. However, when using `BartForCausalLM` (BART’s decoder-only model), abnormally low training and validation losses (\~1e-6) were observed. This issue is documented in [this GitHub discussion](https://github.com/huggingface/transformers/issues/27517).
 >
-> To address it, we modified the source code of `transformers` accordingly. If you wish to retrain our model, please apply the modifications described in the GitHub issue and modify the loss calculation part of `BartForCausalLM` [source code](https://github.com/huggingface/transformers/blob/main/src/transformers/models/bart/modeling_bart.py).
+> To resolve this, modifications to the `transformers` library source code are required. If you intend to retrain the model, please refer to the GitHub thread and update the loss calculation section in the `BartForCausalLM` implementation, found in the [official source code](https://github.com/huggingface/transformers/blob/main/src/transformers/models/bart/modeling_bart.py).
+>
+> Specifically, replace the loss calculation block:
+>
+> ```python
+> loss = None
+> if labels is not None:
+>     labels = labels.to(logits.device)
+>     loss_fct = CrossEntropyLoss()
+>     loss = loss_fct(logits.view(-1, self.config.vocab_size), labels.view(-1))
+> ```
+>
+> with the following corrected version:
+>
+> ```python
+> loss = None
+> if labels is not None:
+>     # Shift so that tokens < n predict n
+>     shift_logits = logits[..., :-1, :].contiguous()
+>     shift_labels = labels[..., 1:].contiguous()
+>     # Flatten the tokens
+>     loss_fct = CrossEntropyLoss()
+>     shift_logits = shift_logits.view(-1, self.config.vocab_size)
+>     shift_labels = shift_labels.view(-1)
+>     # Enable model parallelism
+>     shift_labels = shift_labels.to(shift_logits.device)
+>     loss = loss_fct(shift_logits, shift_labels)
+> ```
+>
+> These changes ensure that the model computes the training loss correctly.
 
 To train the unconditional generation model, run:
 
@@ -40,9 +77,11 @@ To train the unconditional generation model, run:
 bash scripts/train_bartforcausallm.sh
 ```
 
-A pre-trained model checkpoint is also available for download [here](mylink). Please download and put it in the `checkpoints` directory.
+Alternatively, you may download a pre-trained model checkpoint from [this link](mylink) and place it in the `checkpoints` directory.
 
-## Molecule Generation
+---
+
+## 🔬 Molecule Generation
 
 To generate molecules using the trained model, execute:
 
@@ -50,12 +89,18 @@ To generate molecules using the trained model, execute:
 bash scripts/sample.sh
 ```
 
-## Evaluation
+---
 
-To evaluate the basic quality of generated molecules, use the following command:
+## 📈 Evaluation
+
+To evaluate the basic quality of the generated molecules, use:
 
 ```bash
 bash scripts/evaluate_confseq.sh
 ```
 
-Also refer to `notebook` directory for more detailed evaluation and visualization of the results.
+For more detailed evaluation and visualization, please refer to the contents of the `notebook` directory.
+
+---
+
+Would you like a version with Markdown enhancements, such as emojis or advanced formatting?

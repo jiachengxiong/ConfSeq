@@ -111,46 +111,28 @@ def main():
     
         # 根据配置选择不同的分子构建和指标计算方式
         try:
-            if config['data']['use_smiles']:
-                # SMILES场景
-                all_results_pred = process_map(
-                    convert_smiles_to_mol,
-                    gen_smiles,
-                    max_workers=config['data']['num_workers'],
-                    chunksize=20, 
-                    disable=True
-                )
-                all_results_label = process_map(
-                    convert_smiles_to_mol,
-                    ref_smiles,
-                    max_workers=config['data']['num_workers'],
-                    chunksize=20,
-                    disable=True
-                )
-            else:
-                # TDSmiles场景
-                all_results_pred = process_map(
-                    convert_tdsmiles_to_mol,
-                    gen_smiles,
-                    max_workers=config['data']['num_workers'],
-                    chunksize=20,
-                    disable=True
-                )
-                all_results_label = process_map(
-                    convert_tdsmiles_to_mol,
-                    ref_smiles,
-                    max_workers=config['data']['num_workers'],
-                    chunksize=20,
-                    disable=True
-                )
-                # basic metrics
-                basic_metrics = pd.DataFrame()
-                for smiles_list in batched_gen_smiles:
-                    basic_metrics_ = compute_basic_metrics_confseq(smiles_list, 
-                                                                train_smiles=train_smiles,
-                                                                test_smiles=None,
-                                                                num_samples=len(smiles_list))
-                    basic_metrics = pd.concat([basic_metrics, basic_metrics_])
+            all_results_pred = process_map(
+                convert_tdsmiles_to_mol,
+                gen_smiles,
+                max_workers=config['data']['num_workers'],
+                chunksize=20,
+                disable=True
+            )
+            all_results_label = process_map(
+                convert_tdsmiles_to_mol,
+                ref_smiles,
+                max_workers=config['data']['num_workers'],
+                chunksize=20,
+                disable=True
+            )
+            # basic metrics
+            basic_metrics = pd.DataFrame()
+            for smiles_list in batched_gen_smiles:
+                basic_metrics_ = compute_basic_metrics_confseq(smiles_list, 
+                                                            train_smiles=train_smiles,
+                                                            test_smiles=None,
+                                                            num_samples=len(smiles_list))
+                basic_metrics = pd.concat([basic_metrics, basic_metrics_])
 
             # 对预测结果进行分批处理（用于后续相似度计算）
             batch_size = config['model']['generation_config']['num_return_sequences']
@@ -167,16 +149,6 @@ def main():
                     elif result is not None:
                         clean.append(result)
                 gen_data.append(clean)
-
-            if config['data']['use_smiles']:
-                # 计算基本指标
-                basic_metrics = pd.DataFrame()
-                for mols in gen_data:
-                    basic_metrics_ = compute_basic_metrics_baseline(mols, 
-                                                                    train_smiles=train_smiles,
-                                                                    test_smiles=None,
-                                                                    num_samples=len(mols))
-                    basic_metrics = pd.concat([basic_metrics, basic_metrics_])
 
             # 计算相似度（形状相似度和Tanimoto）
             similarity_df = compute_similarity_dataframe(

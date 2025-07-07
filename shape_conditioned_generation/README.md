@@ -1,26 +1,31 @@
 # ConfSeq - Shape-conditioned Generation
 
-This directory contains the code and configuration files for the shape-conditioned molecular generation module of **ConfSeq**.
+This directory contains the code and configuration files for the **shape-conditioned molecular generation module** of ConfSeq.
 
 ![Overview](./assets/overview.png)
 
-> \[!NOTE]
-> Execute all commands below inside the `confseq` conda environment. Make sure your working directory is set to `shape_conditioned_generation`.
+> **Note**
+> All commands below must be executed inside the `confseq` Conda environment. Ensure your working directory is set to `shape_conditioned_generation`.
 
-## Data Preparation
+---
 
-We employ the **MOSES** dataset for unconditional molecular generation, following the same data split strategy as in the [DiffSMol paper](https://www.nature.com/articles/s42256-025-01030-w).
+## 📦 Data Preparation
 
-First, download the dataset and put it in the `data/MOSES/` directory. You can download the dataset from [this link](mylink):
+We adopt the **MOSES** dataset for unconditional molecular generation, following the same data split strategy as the [DiffSMol paper](https://www.nature.com/articles/s42256-025-01030-w).
 
-Next, process the dataset to obtain the molecule surface pointcloud and corresponding ConfSeq representations by executing:
+1. **Download the Dataset**
+   Download the dataset and place it in the `data/MOSES/` directory. You can obtain the dataset from [this link](mylink).
 
-```bash
-bash scripts/preprocess.sh
-```
+2. **Preprocess the Dataset**
+   Generate the molecular surface point clouds and corresponding ConfSeq representations by executing:
 
-> \[!CAUTION]
-> While sampling pointclouds following the protocols of the DiffSMol paper, we run into some issues with the oddt library. You'd better modify the source code of oddt to avoid these issues. Specifically, you should open the defination of function `oddt.surface.generate_surface_marching_cubes` and change the following lines:
+   ```bash
+   bash scripts/preprocess.sh
+   ```
+
+> ![Caution]
+> During point cloud sampling, issues may arise with the `oddt` library. To avoid these, modify the source code of `oddt`. Specifically, open the definition of `oddt.surface.generate_surface_marching_cubes` and replace:
+>
 > ```python
 > try:
 >     from skimage.morphology import ball, binary_closing
@@ -34,7 +39,9 @@ bash scripts/preprocess.sh
 >                   'generating molecular surfaces.')
 >     skimage = None
 > ```
-> into this:
+>
+> with:
+>
 > ```python
 > try:
 >     from skimage.morphology import ball, binary_closing
@@ -49,31 +56,37 @@ bash scripts/preprocess.sh
 >     skimage = None
 > ```
 
-Upon successful execution, the processed dataset will be available at `data/`. This dataset will serve as the input for training and evaluation. Alternatively, you can download the processed datasets directly from [this link](mylink).
+Upon successful execution, the processed dataset will be available under `data/`, ready for model training and evaluation. Alternatively, you can directly download the preprocessed datasets from [this link](mylink).
 
-## Model Training
+---
 
-To train the unconditional generation model, run:
+## 🏋️ Model Training
+
+To train the shape-conditioned generation model, execute:
 
 ```bash
 bash scripts/train_surfbart.sh
 ```
 
-A pre-trained model checkpoint is also available for download [here](mylink).
+A pretrained model checkpoint can also be downloaded from [this link](mylink).
 
-## Molecule Generation
+---
 
-To generate molecules using the trained model, execute:
+## 🌱 Molecule Generation
+
+To generate molecules using the trained model, run:
 
 ```bash
 bash scripts/sample_confseq.sh
 ```
 
-## Evaluation
+---
 
-We utilize the ShaEP software to calculate the shape similarity between the generated molecules and the reference molecules as suggested by [SQUID](https://github.com/keiradams/SQUID). You can download the ShaEP software from [this link](https://users.abo.fi/mivainio/shaep/index.php) or use the software provided in the `software` directory.
+## 📊 Evaluation
 
-To evaluate the quality of generated molecules, please run the following command:
+We evaluate the shape similarity between generated molecules and reference molecules using **ShaEP**, as recommended by [SQUID](https://github.com/keiradams/SQUID). You can download ShaEP from [this link](https://users.abo.fi/mivainio/shaep/index.php) or use the executable provided in the `software` directory.
+
+To perform the evaluation, run:
 
 ```bash
 bash scripts/evaluate_confseq.sh

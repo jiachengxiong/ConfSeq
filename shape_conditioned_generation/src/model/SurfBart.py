@@ -246,8 +246,8 @@ class SurfaceBartv2(nn.Module):
                  normals, 
                  attention_mask=None,
                  generation_config=None,
-                #  prefix_ids=[0, 460], 
-                prefix_ids=[0],
+                 prefix_ids=[0, 460], 
+                # prefix_ids=[0],
                  **kwargs):
         if "labels" in kwargs:
             kwargs.pop("labels")

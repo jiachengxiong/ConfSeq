@@ -1,6 +1,6 @@
 data:
-  data_dir: 'data/geom_shape/pointcloud_train_samples1024_augmode0_augtimes1_lmdb'
-  train_smiles_dir: 'data/geom_shape/train_smiles.pkl'
+  data_dir: 'data/pointcloud_train_samples1024_std2x_aug2x_merge_lmdb'
+  train_smiles_dir: 'data/MOSES/MOSES_train_smiles.pkl'
   use_smiles: True  # Whether to use SMILES data
   num_workers: 40  # Number of workers for data loading
 
