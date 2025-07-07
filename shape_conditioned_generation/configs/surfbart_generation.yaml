@@ -1,19 +1,19 @@
-save_path: 'results/conditional/surfbart/geom/sample1-smiles' # TODO: Change this to the desired save path
+save_path: 'results/sample0' 
 seed: 42
-model_path: 'checkpoints/conditional/shape-geom-smiles-0520/checkpoint-55000'
+model_path: './checkpoints/surfbartv2-sample1024-merge-angles-0421/checkpoint-175000'
 batch_size: 8
 upscale_temp: 1.0
 downscale_temp: 1.0
 
 data:
-  data_dir: "data/geom_shape/pointcloud_test_samples1024_augmode0_augtimes1_lmdb"  # Path to the raw data (pickle file)
+  data_dir: "data/pointcloud_test_samples1024_augmode0_augtimes1_lmdb"  # Path to the raw data (pickle file)
   use_smiles: true
   num_workers: 20
 
 generation_config:
   max_length: 512
   do_sample: True
-  # temperature: 2.0
-  # top_k: 150
-  # top_p: 0.95
+  temperature: 1.2
+  top_k: 100
+  top_p: 0.95
   num_return_sequences: 50

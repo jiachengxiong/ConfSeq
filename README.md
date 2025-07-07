@@ -14,20 +14,36 @@ We also provide the ready-to-use ConfSeq-series models online at [Sciminer](http
 
 ## 📦 Environment Setup
 
-It is recommended to use a Conda environment to install the required dependencies:
+It is recommended to use a Conda environment to install the required dependencies. The following commands will create a new Conda environment named `test` with Python 3.11 and CUDA 12.6, and install the necessary packages for running ConfSeq models.
 
 ```bash
-conda env create -f environment.yaml
-conda activate confseq
+conda create -n test python=3.11
+conda activate test
+
+conda install pytorch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 pytorch-cuda=12.4 -c pytorch -c nvidia
+pip install rdkit==2025.3.2 transformers==4.50 accelerate
+pip install jupyter epam.indigo smilesPE posebusters timeout_decorator fcd_torch easydict py3dmol swanlab lmdb scikit-image matplotlib seaborn
+conda install openbabel -c conda-forge
+conda install ninja
+pip install "git+https://github.com/facebookresearch/pytorch3d.git"
+pip install oddt
+export PATH=/usr/local/cuda-12.9/bin:$PATH  # only if you encountered CUDA version mismatch
+export LD_LIBRARY_PATH=/usr/local/cuda-12.9/lib64:$LD_LIBRARY_PATH  # only if you encountered CUDA version mismatch
+pip install ./shape_conditioned_generation/src/model/pointops
 ```
+We also provide a conda-packed environment in [this link](mylink) for easy setup. You can download the file and run the following command to create the environment:
+
+
+## Demo
+
+We provide a demo notebook in `demo` directory on how to use convert a 3D molecule into a ConfSeq sequence and vise versa. The detailed algorithm of ConfSeq can be found at `demo/ConfSeq.py`.
 
 ---
 
 ## 🚀 Running the Models
 
 The ConfSeq-series models are organized into subdirectories, each corresponding to a specific task mentioned in the paper.
-The core algorithm of ConfSeq is provided in 
-`ConfSeq_3_2.py`.
+The core algorithm 
 
 Please refer to the `README.md` file within each subdirectory for detailed instructions on running the respective models.
 

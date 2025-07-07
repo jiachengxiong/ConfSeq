@@ -52,8 +52,10 @@ bash scripts/sample.sh
 
 ## Evaluation
 
-To evaluate the quality of generated molecules, use the following command:
+To evaluate the basic quality of generated molecules, use the following command:
 
 ```bash
 bash scripts/evaluate_confseq.sh
 ```
+
+Also refer to `notebook` directory for more detailed evaluation and visualization of the results.

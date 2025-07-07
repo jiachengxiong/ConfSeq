@@ -71,3 +71,13 @@ def get_logger(name, log_dir=None):
 
     return logger
 
+
+def flatten_easydict(d, parent_key=''):
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}/{k}" if parent_key else k
+        if isinstance(v, dict):  
+            items.extend(flatten_easydict(v, new_key).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)

@@ -3,15 +3,13 @@ sys.path.append('.')
 import argparse
 import os
 
-from tqdm.auto import tqdm
 from tqdm.contrib.concurrent import process_map
-from rdkit.Chem import SDWriter
 from rdkit.Chem.PropertyMol import PropertyMol
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.warning')
 
 from src.utils.misc import load_config, get_logger, save_pickle, load_smileslist, load_scores
-from src.utils.reconstruct import convert_tdsmiles_to_mol, convert_smiles_to_mol
+from src.utils.reconstruct import convert_tdsmiles_to_mol
 
 def main():
     parser = argparse.ArgumentParser()
@@ -32,20 +30,12 @@ def main():
 
     # Convert TD SMILES to molecules
     logger.info('Converting TD SMILES to molecules...')
-    if config['data']['use_smiles']:
-        all_results = process_map(
-            convert_smiles_to_mol,
-            smiles,
-            max_workers=config['data']['num_workers'],
-            chunksize=20
-        )
-    else:
-        all_results = process_map(
-            convert_tdsmiles_to_mol,
-            smiles,
-            max_workers=config['data']['num_workers'],
-            chunksize=20
-        )
+    all_results = process_map(
+        convert_tdsmiles_to_mol,
+        smiles,
+        max_workers=config['data']['num_workers'],
+        chunksize=20
+    )
 
     # split results into batches
     batch_size = config['generation_config']['num_return_sequences']

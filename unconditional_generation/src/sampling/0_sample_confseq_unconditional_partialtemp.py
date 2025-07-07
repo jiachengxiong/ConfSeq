@@ -159,10 +159,6 @@ def main():
     logger.info('---------------------------------------------')
     logger.info("config loaded: \n" + str(config))
 
-    # Set CUDA device
-    logger.info(f"Setting CUDA device to: {config.device}")
-    os.environ['CUDA_VISIBLE_DEVICES'] = str(config.device)
-
     # Load tokenizer
     logger.info("Loading tokenizer...")
     tokenizer = WhitespaceTokenizer()

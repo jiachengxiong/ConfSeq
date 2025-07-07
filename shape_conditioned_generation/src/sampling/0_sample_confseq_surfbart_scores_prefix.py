@@ -115,7 +115,7 @@ def generate_outputs(model, dataloader, tokenizer, generation_config, upscale_te
             attention_mask=None,
             generation_config=generation_config,
             logits_processor=custom_logits_processors,
-            # prefix_ids=[tokenizer.encode('<BOS>')[1], tokenizer.encode('<std>')[1]],       
+            prefix_ids=[tokenizer.encode('<BOS>')[1], tokenizer.encode('<std>')[1]],       
         )
 
         gen_smiles = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)

@@ -32,7 +32,6 @@ import math
 import lmdb
 import pickle
 import argparse
-from functools import partial
 
 import numpy as np
 import torch
@@ -283,8 +282,8 @@ def process_dataset(
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Build LMDB point‑cloud dataset (improved)")
-    parser.add_argument("--data_path", default='data/MOSES/shapemol/MOSES2_training_val_dataset.pkl', help="原始 pickle/… 路径")
-    parser.add_argument("--save_dir", default='data/MOSES/', help="LMDB 输出目录")
+    parser.add_argument("--data_path", default='data/MOSES/MOSES2_training_val_dataset.pkl', help="原始 pickle/… 路径")
+    parser.add_argument("--save_dir", default='data/', help="LMDB 输出目录")
     parser.add_argument("--split", choices=["train", "test"], required=True)
     parser.add_argument("--num_samples", type=int, default=1024, help="每个分子采样点数")
     parser.add_argument("--num_workers", type=int, default=30)

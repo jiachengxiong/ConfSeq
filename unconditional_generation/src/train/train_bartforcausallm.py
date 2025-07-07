@@ -32,9 +32,6 @@ def main():
     tokenizer = WhitespaceTokenizer()
     logger.info(f"Vocab size: {tokenizer.vocab_size}")
     
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(config['train']['device'])
-    logger.info(f"Device: {os.environ['CUDA_VISIBLE_DEVICES']}")
-    
     logger.info("Loading datasets...")
     train_dataset = SMILESDataset(load_pickle(config['train_data']), tokenizer, max_length=config['model']['bart']['max_position_embeddings'])
     valid_dataset = SMILESDataset(load_pickle(config['valid_data']), tokenizer, max_length=config['model']['bart']['max_position_embeddings'])
@@ -50,7 +47,7 @@ def main():
         raise ValueError(f"Dataset size ({len(valid_dataset)}) is smaller than subset size ({subset_size}).")
     
     # load train smiles to cal novelty
-    train_smiles = load_pickle('data/geom/geom_smiles/train_smiles.pkl')
+    train_smiles = load_pickle('data/train_smiles.pkl')
     logger.info(f"Loaded {len(train_smiles)} training SMILES strings for novelty calculation.")
 
     # load model
@@ -101,14 +98,13 @@ def main():
         dataloader_num_workers=config['train']['dataloader_num_workers'],
         load_best_model_at_end=config['train']['load_best_model_at_end'],
         logging_first_step=config['train']['logging_first_step'],
-        report_to='wandb',
+        report_to='swanlab',
         bf16=config['train']['bf16'],
         save_only_model=True,
         predict_with_generate=True,
         metric_for_best_model='Validity * Uniqueness',
         greater_is_better=True,
         save_safetensors=False,
-        torch_compile=True,
         ddp_find_unused_parameters=True,
         ddp_backend='nccl',
         eval_on_start=True,

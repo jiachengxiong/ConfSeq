@@ -29,8 +29,8 @@ def main():
     logger.info('---------------------------------------------')
 
     # load reference SMILES
-    train_smiles = load_pickle('data/geom/geom_smiles/train_smiles.pkl')
-    logger.info(f'Loaded {len(train_smiles)} train SMILES from {args.dataset}\n')
+    train_smiles = load_pickle('data/train_smiles.pkl')
+    logger.info(f'Loaded {len(train_smiles)} train SMILES')
 
     final_metrics_df = pd.DataFrame()
     for seed_i in range(getattr(config, 'sample_times', 1)):
@@ -66,7 +66,7 @@ def main():
         # compute rdkit rmsds(optional)
         if args.rdkit_rmsd:
             logger.info('Computing rdkit rmsds...')
-            rmsd_metric = get_rdkit_rmsd(mols, save_path=os.path.join(run_save_path, 'rdkit_rmsd_tfd.pkl'))
+            rmsd_metric = get_rdkit_rmsd(mols, save_path=os.path.join(run_save_path, 'rdkit_rmsd.pkl'))
             logger.info(rmsd_metric)
         else:
             rmsd_tfd_metric = None

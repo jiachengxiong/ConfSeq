@@ -7,12 +7,67 @@ RDLogger.DisableLog('rdApp.*')
 import logging
 from pathlib import Path
 from typing import List, Optional, Any
-
+from posebusters import PoseBusters
+import timeout_decorator
+from tqdm.contrib.concurrent import process_map
 from src.utils.ConfSeq_3_2 import replace_angle_brackets_with_line
-from src.utils.similarity import (get_shape_similarity_matrix, 
-                                  get_tanimoto_similarity_matrix,
+from src.utils.similarity import (get_tanimoto_similarity_matrix,
                                   get_shape_similarity_matrix_shaep,
                                   )
+
+@timeout_decorator.timeout(120)
+def my_bust_timeout(mol):
+    buster = PoseBusters(config='mol')
+    df = buster.bust(mol, full_report=True).reset_index()
+    if df is not None:
+        return df
+    
+
+def my_bust(mol):
+    try:
+        return my_bust_timeout(mol)
+    except:
+        return None
+
+
+def compute_posebusters_parallel(input, save_path=None, max_workers=10, chunksize=20, disable_tqdm=False):
+    if isinstance(input, str):
+        sdf_path = input
+        mols = [mol for mol in Chem.SDMolSupplier(sdf_path) if mol is not None]
+    else:
+        mols = input
+    results = process_map(my_bust, mols, max_workers=max_workers, chunksize=chunksize, disable=disable_tqdm)
+    df = pd.DataFrame()
+    for result in results:
+        if result is not None:
+            df = pd.concat([df, result])
+    if save_path is not None:
+        df.to_csv(save_path, index=False)
+    return df
+
+def get_posebusters_summary(df, num_samples=10000):
+    df_check = df[['mol_pred_loaded', 
+                'sanitization', 
+                'inchi_convertible',
+                'all_atoms_connected',
+                'bond_lengths',
+                'bond_angles',
+                'internal_steric_clash',
+                'aromatic_ring_flatness',
+                'double_bond_flatness',
+                'internal_energy',
+                'passes_valence_checks',
+                'passes_kekulization']]
+    
+    df_check = df_check.astype(bool)
+    # Calculate the mean of each column
+    result_dict = {col: df_check[col].sum()/ num_samples for col in df_check.columns}
+    result_df = pd.DataFrame(result_dict, index=[0])
+
+    valid = df_check[df_check.all(axis=1)]
+    result_df['PB_valid'] = valid.shape[0] / num_samples
+    
+    return result_df
 
 
 def compute_basic_metrics_confseq(gen_smiles, train_smiles, num_samples=10000):
@@ -113,7 +168,6 @@ def flatten_similarity_data(
 def compute_similarity_dataframe(
     ref_mols: List[Any],
     gen_data: List[List[Any]],
-    method: str = 'shaep',
     save_path: Optional[str] = None,
     has_scores: bool = True
 ) -> pd.DataFrame:
@@ -142,14 +196,8 @@ def compute_similarity_dataframe(
     shape_list, graph_list = [], []
     for idx, batch in enumerate(tqdm(gen_data, desc='计算相似度')):
         try:
-            if method == 'shaep':
-                s = get_shape_similarity_matrix_shaep([ref_mols[idx]], batch).flatten()
-                g = get_tanimoto_similarity_matrix([ref_mols[idx]], batch).flatten()
-            elif method == 'rdkit':
-                s = get_shape_similarity_matrix([ref_mols[idx]], batch).flatten()
-                g = get_tanimoto_similarity_matrix([ref_mols[idx]], batch).flatten()
-            else:
-                raise ValueError(f'未知 method: {method}')
+            s = get_shape_similarity_matrix_shaep([ref_mols[idx]], batch).flatten()
+            g = get_tanimoto_similarity_matrix([ref_mols[idx]], batch).flatten()
         except Exception as e:
             logging.warning(f'第 {idx} 组计算失败，使用空数组替代：{e}')
             s, g = np.array([]), np.array([])

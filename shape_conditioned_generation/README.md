@@ -11,23 +11,43 @@ This directory contains the code and configuration files for the shape-condition
 
 We employ the **MOSES** dataset for unconditional molecular generation, following the same data split strategy as in the [DiffSMol paper](https://www.nature.com/articles/s42256-025-01030-w).
 
-First, download the dataset:
-
-```bash
-cd data
-wget     # TODO: put my link here
-tar -xzvf 4360331
-cd ..
-```
+First, download the dataset and put it in the `data/MOSES/` directory. You can download the dataset from [this link](mylink):
 
 Next, process the dataset to obtain the molecule surface pointcloud and corresponding ConfSeq representations by executing:
 
 ```bash
-python src/preprocess/build_pointcloud_lmdb.py
+bash scripts/preprocess.sh
 ```
 
 > \[!CAUTION]
-> While sampling pointclouds following the protocols of the DiffSMol paper, we run into some issues with the oddt library. You'd better modify the source code of oddt to avoid these issues. 
+> While sampling pointclouds following the protocols of the DiffSMol paper, we run into some issues with the oddt library. You'd better modify the source code of oddt to avoid these issues. Specifically, you should open the defination of function `oddt.surface.generate_surface_marching_cubes` and change the following lines:
+> ```python
+> try:
+>     from skimage.morphology import ball, binary_closing
+>     from skimage import __version__ as skimage_version
+>     if LooseVersion(skimage_version) >= LooseVersion('0.13'):
+>         from skimage.measure import marching_cubes_lewiner as marching_cubes
+>     else:
+>         from skimage.measure import marching_cubes
+> except ImportError as e:
+>     warnings.warn('scikit-image could not be imported and is required for'
+>                   'generating molecular surfaces.')
+>     skimage = None
+> ```
+> into this:
+> ```python
+> try:
+>     from skimage.morphology import ball, binary_closing
+>     from skimage import __version__ as skimage_version
+>     # if LooseVersion(skimage_version) >= LooseVersion('0.13'):
+>     #     from skimage.measure import marching_cubes_lewiner as marching_cubes
+>     # else:
+>     from skimage.measure import marching_cubes
+> except ImportError as e:
+>     warnings.warn('scikit-image could not be imported and is required for'
+>                   'generating molecular surfaces.')
+>     skimage = None
+> ```
 
 Upon successful execution, the processed dataset will be available at `data/`. This dataset will serve as the input for training and evaluation. Alternatively, you can download the processed datasets directly from [this link](mylink).
 
@@ -51,6 +71,10 @@ bash scripts/sample_confseq.sh
 
 ## Evaluation
 
-We utilize the ShaEP software to calculate the shape similarity between the generated molecules and the reference molecules. You can download the ShaEP software from [this link](https://users.abo.fi/mivainio/shaep/index.php) or use the software provided in the `software` directory.
+We utilize the ShaEP software to calculate the shape similarity between the generated molecules and the reference molecules as suggested by [SQUID](https://github.com/keiradams/SQUID). You can download the ShaEP software from [this link](https://users.abo.fi/mivainio/shaep/index.php) or use the software provided in the `software` directory.
 
-To evaluate the quality of generated molecules, please refer to the `notebook` directory, which contains Jupyter notebooks for evaluating the generated molecules.
+To evaluate the quality of generated molecules, please run the following command:
+
+```bash
+bash scripts/evaluate_confseq.sh
+```

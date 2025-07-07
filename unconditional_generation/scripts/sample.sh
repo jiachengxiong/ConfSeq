@@ -1,6 +1,6 @@
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=3
 
 # sample confseq
-python src/sampling/unconditional/0_sample_confseq_unconditional_partialtemp.py
+python src/sampling/0_sample_confseq_unconditional_partialtemp.py
 # convert to rdmol 
-python src/sampling/unconditional/1_get_mol_from_confseq.py
+python src/sampling/1_get_mol_from_confseq.py
