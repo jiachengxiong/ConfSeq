@@ -11,7 +11,7 @@ This directory contains the code and configuration files for the 3D molecular re
 We use the **DUD-E** and **PCBA** datasets to evaluate the virtual screening capability of the model.  
 Additionally, molecular pair similarity data for model training are generated using **RDKit** and **LSalign**.
 
-Raw and processed datasets can be downloaded from [your link here].
+Raw and processed datasets can be downloaded from [this link](mylink).
 
 ---
 ## 🏋️ Model Training
