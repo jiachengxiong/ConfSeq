@@ -1,4 +1,4 @@
-# ConfSeq - Unconditional Molecular Generation
+# ConfSeq - Molecular Conformation Prediction 
 
 This directory contains the code and configuration files for the 3D molecular conformation prediction module of **ConfSeq**.
 
