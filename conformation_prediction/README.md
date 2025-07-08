@@ -19,6 +19,20 @@ raw_data/
 └── test_data_200.pkl 
 ```
 
+将这些原始数据转化成训练数据, 运行
+```
+!python process.py
+```
+生成的文件,将位于processed_data文件夹下,The expected folder structure is as follows:
+raw_data/
+├── train_data_39k_ConfSeq_aug_0.txt
+├── train_data_39k_ConfSeq_aug_1.txt
+├── train_data_39k_ConfSeq_aug_2.txt
+├── val_data_5k_ConfSeq.txt
+├── test_data_200_in_smiles_aug_0.json
+├── test_data_200_in_smiles_aug_1.json
+└── test_data_200_in_smiles_aug_2.json
+
 ---
 ## 🏋️ Model Training
 
