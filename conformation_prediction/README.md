@@ -8,13 +8,9 @@ This directory contains the code and configuration files for the 3D molecular co
 ---
 ## 📦 Data Preparation
 
-We use the **GEOM-Drugs** dataset to train and evaluate our model.  
-The original data were downloaded from [this repository](https://github.com/OdinZhang/SDEGen).  
-Alternatively, you can download the processed data from our cloud storage: [this link](mylink).
+We use the **GEOM-Drugs** dataset to train and evaluate our model.  The original data were downloaded from [this repository](https://github.com/OdinZhang/SDEGen).  Alternatively, you can download the processed data from our cloud storage: [this link](mylink).
 
-After downloading, place the files inside the `raw_data` folder.
-
-The expected folder structure is as follows:
+After downloading, place the files inside the `raw_data` folder. The expected folder structure is as follows:
 
 ---
 ## 🏋️ Model Training
