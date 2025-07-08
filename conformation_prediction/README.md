@@ -8,21 +8,13 @@ This directory contains the code and configuration files for the 3D molecular co
 ---
 ## 📦 Data Preparation
 
-We use the **DUD-E** and **PCBA** datasets to evaluate the virtual screening capability of the model.  
-Additionally, molecular pair similarity data for model training are generated using **RDKit** and **LSalign**.
+We use the **GEOM-Drugs** dataset to train and evaluate our model.  
+The original data were downloaded from [this repository](https://github.com/OdinZhang/SDEGen).  
+Alternatively, you can download the processed data from our cloud storage: [this link](mylink).
 
-Raw and processed datasets can be downloaded from [this link](mylink).
+After downloading, place the files inside the `raw_data` folder.
 
-After downloading, extract the archive and place its contents inside the `data` folder.  
 The expected folder structure is as follows:
-
-```
-data/
-├── DUDE/
-├── PCBA/
-├── PDB/
-└── Pairwise_molecular_similarity/
-```
 
 ---
 ## 🏋️ Model Training
