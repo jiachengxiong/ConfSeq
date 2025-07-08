@@ -15,7 +15,7 @@ We provide ready-to-use ConfSeq-series models online at [Sciminer](https://scimi
 
 ## 📦 Environment Setup
 
-We strongly recommend creating a dedicated Conda environment to manage dependencies. Execute the following commands to create an environment named `confseq` with Python 3.11 and install all required packages:
+We strongly recommend creating a dedicated Conda environment to manage dependencies. Execute the following commands to create an environment named `confseq` with Python 3.11 and CUDA 12.6:
 
 ```bash
 conda create -n confseq python=3.11 -y
@@ -23,14 +23,14 @@ conda activate confseq
 
 conda install pytorch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 pytorch-cuda=12.4 -c pytorch -c nvidia -y
 
-pip install rdkit==2024.9.3 transformers==4.50 accelerate
-pip install jupyter epam.indigo smilesPE posebusters timeout_decorator fcd_torch easydict py3dmol swanlab lmdb scikit-image matplotlib seaborn
+pip install rdkit==2024.9.3 transformers==4.50 accelerate==1.8.1
+pip install jupyter epam.indigo==1.32.0 SmilesPE==0.0.3 posebusters==0.4.4 timeout_decorator==0.5.0 fcd_torch==1.0.7 easydict==1.13 py3dmol==2.5.1 swanlab==0.6.4 lmdb==1.6.2 scikit-image==0.25.2 matplotlib==3.10.3 seaborn==0.13.2
 
 conda install openbabel -c conda-forge -y
 conda install ninja -y
 
 pip install "git+https://github.com/facebookresearch/pytorch3d.git"
-pip install oddt
+pip install oddt==0.7
 pip install ./shape_conditioned_generation/src/model/pointops
 ```
 
@@ -54,7 +54,7 @@ A demonstration notebook illustrating how to convert a 3D molecule to a ConfSeq 
 
 ---
 
-## 📦 Storage
+## 📦 Resources
 
 The datasets and pretrained model checkpoints are hosted at [this Zenodo link](link).
 
