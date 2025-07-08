@@ -19,7 +19,7 @@ raw_data/
 └── test_data_200.pkl 
 ```
 
-To convert the raw data into training data, run:
+To convert the raw data into ConfSeq-formatted text files, run:
 
 ```
 !python process.py
