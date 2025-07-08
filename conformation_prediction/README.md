@@ -49,9 +49,13 @@ accelerate launch --multi_gpu --mixed_precision fp16 --num_processes 4 train.py
 Alternatively, you may download a pre-trained model checkpoint from [this link](mylink) and place it in the `checkpoints` directory.
 
 ---
-## 📊 Evaluation
+## 🤖 Inference
 
-To perform the evaluation, please run the `pcba.ipynb` and `dude.ipynb` notebooks.
+To perform inference, run:
+
+'''
+python infer_temperature_series.py
+'''
 
 ---
 ## 🎨 Embedding Visualization
