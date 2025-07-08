@@ -27,7 +27,7 @@ To convert the raw data into ConfSeq-formatted text files, run:
 
 The generated files will be saved in the `processed_data` folder.  The expected folder structure is as follows:
 ```
-raw_data/
+processed_data/
 ├── train_data_39k_ConfSeq_aug_0.txt
 ├── train_data_39k_ConfSeq_aug_1.txt
 ├── train_data_39k_ConfSeq_aug_2.txt
