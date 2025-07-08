@@ -40,7 +40,7 @@ processed_data/
 ---
 ## 🏋️ Model Training
 
-To train the representation learning model, run:
+To train the conformation prediction model, run:
 
 ```
 accelerate launch --multi_gpu --mixed_precision fp16 --num_processes 4 train.py
