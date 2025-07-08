@@ -12,6 +12,13 @@ We use the **GEOM-Drugs** dataset to train and evaluate our model.  The original
 
 After downloading, place the files inside the `raw_data` folder. The expected folder structure is as follows:
 
+```
+raw_data/
+├── train_data_39k.pkl
+├── val_data_5k.pkl
+└── test_data_200.pkl 
+```
+
 ---
 ## 🏋️ Model Training
 
