@@ -505,15 +505,15 @@ def get_atom_token_pos_lis(t_smiles):
         else:
             #print(token)
             # 如果 token 是小写字母且前一个字符是大写字母
-            if token == 'l'and idx > 0 and lis[idx - 1] == 'C':
+            if len(token) == 'l'and idx > 0 and lis[idx - 1] == 'C':
                 pass  # 如果是小写字母且前面是大写字母，跳过
-            elif token == 'r'and idx > 0 and lis[idx - 1] == 'B':
+            elif len(token) == 'r'and idx > 0 and lis[idx - 1] == 'B':
                 pass  # 如果是小写字母且前面是大写字母，跳过
-            elif token == 'i'and idx > 0 and lis[idx - 1] == 'S':
+            elif len(token) == 'i'and idx > 0 and lis[idx - 1] == 'S':
                 pass  # 如果是小写字母且前面是大写字母，跳过
-            elif token == 's'and idx > 0 and lis[idx - 1] == 'A':
+            elif len(token) == 's'and idx > 0 and lis[idx - 1] == 'A':
                 pass  # 如果是小写字母且前面是大写字母，跳过
-            elif token == 'e'and idx > 0 and lis[idx - 1] == 'S':
+            elif len(token) == 'e'and idx > 0 and lis[idx - 1] == 'S':
                 pass  # 如果是小写字母且前面是大写字母，跳过
             # 如果 token 是字母
             elif token.isalpha():
