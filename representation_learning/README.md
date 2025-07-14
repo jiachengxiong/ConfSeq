@@ -1,4 +1,4 @@
-# ConfSeq - Unconditional Molecular Generation
+# ConfSeq - 3D molecular representation learning
 
 This directory contains the code and configuration files for the 3D molecular representation learning module of **ConfSeq**.
 ![Overview](./assets/overview.png)
@@ -29,8 +29,10 @@ The expected folder structure is as follows:
 │   ├── PCBA
 │   ├── PDB
 │   └── Pairwise_molecular_similarity
-└── checkpoints
+├── checkpoints
     └── model_epoch_1.pth
+└── assets
+    └── overview.png
 ```
 
 ---
