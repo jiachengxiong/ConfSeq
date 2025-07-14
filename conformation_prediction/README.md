@@ -13,10 +13,11 @@ We use the **GEOM-Drugs** dataset to train and evaluate our model.  The original
 After downloading, place the files inside the `raw_data` folder. The expected folder structure is as follows:
 
 ```
-raw_data/
-├── train_data_39k.pkl
-├── val_data_5k.pkl
-└── test_data_200.pkl 
+.
+└── raw_data/
+    ├── train_data_39k.pkl
+    ├── val_data_5k.pkl
+    └── test_data_200.pkl
 ```
 
 To convert the raw data into ConfSeq-formatted text files, run:
@@ -27,14 +28,15 @@ To convert the raw data into ConfSeq-formatted text files, run:
 
 The generated files will be saved in the `processed_data` folder.  The expected folder structure is as follows:
 ```
-processed_data/
-├── train_data_39k_ConfSeq_aug_0.txt
-├── train_data_39k_ConfSeq_aug_1.txt
-├── train_data_39k_ConfSeq_aug_2.txt
-├── val_data_5k_ConfSeq.txt
-├── test_data_200_in_smiles_aug_0.json
-├── test_data_200_in_smiles_aug_1.json
-└── test_data_200_in_smiles_aug_2.json
+.
+└── processed_data/
+    ├── train_data_39k_ConfSeq_aug_0.txt
+    ├── train_data_39k_ConfSeq_aug_1.txt
+    ├── train_data_39k_ConfSeq_aug_2.txt
+    ├── val_data_5k_ConfSeq.txt
+    ├── test_data_200_in_smiles_aug_0.json
+    ├── test_data_200_in_smiles_aug_1.json
+    └── test_data_200_in_smiles_aug_2.json
 ```
 
 ---
