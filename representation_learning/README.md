@@ -17,11 +17,19 @@ After downloading, extract the archive and place its contents inside the `data` 
 The expected folder structure is as follows:
 
 ```
-data/
-├── DUDE/
-├── PCBA/
-├── PDB/
-└── Pairwise_molecular_similarity/
+.
+├── README.md
+├── infer_for_DUDE.ipynb
+├── infer_for_PCBA.ipynb
+├── view_PDB_embdding.ipynb
+├── train.py
+├── data
+│   ├── DUDE
+│   ├── PCBA
+│   ├── PDB
+│   └── Pairwise_molecular_similarity
+└── checkpoints
+    └── model_epoch_1.pth
 ```
 
 ---
