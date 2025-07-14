@@ -46,9 +46,9 @@ Alternatively, you may download a pre-trained model checkpoint from [this link](
 ---
 ## 📊 Evaluation
 
-To perform the evaluation, please run the `pcba.ipynb` and `dude.ipynb` notebooks.
+To perform the evaluation, please run the `infer_for_DUDE.ipynb` and `infer_for_PCBA.ipynb` notebooks.
 
 ---
 ## 🎨 Embedding Visualization
-To visualize the representations of ligands in the PDB, run `V.ipynb` notebooks.
+To visualize the representations of ligands in the PDB, run `view_PDB_embdding.ipynb` notebooks.
 
