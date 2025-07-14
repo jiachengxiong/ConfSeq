@@ -23,7 +23,7 @@ After downloading, place the files inside the `raw_data` folder. The expected fo
 To convert the raw data into ConfSeq-formatted text files, run:
 
 ```
-!python process.py
+!python process_raw_data.py
 ```
 
 The generated files will be saved in the `processed_data` folder.  The expected folder structure is as follows:
