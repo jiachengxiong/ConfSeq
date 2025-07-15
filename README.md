@@ -3,7 +3,7 @@
 This repository accompanies the paper
 **“Bridging 3D Molecular Structures and Artificial Intelligence by a Conformation Description Language.”**
 
-![Overview](./assets/overview.png)
+![Overview](./assets/Figure_1.png)
 
 We provide ready-to-use ConfSeq-series models online at [Sciminer](https://sciminer.protonunfold.com/), including:
 
