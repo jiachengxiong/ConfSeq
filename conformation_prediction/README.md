@@ -51,15 +51,16 @@ accelerate launch --multi_gpu --mixed_precision fp16 --num_processes 4 train_mod
 Alternatively, you may download a pre-trained model checkpoint from [this link](mylink) and place it in the `checkpoints` directory.
 
 ---
-## 🤖 Inference and Evaluation
+## 🤖 Inference
 
-To perform inference and evaluation, run:
+To perform inference using different sampling temperatures, run:
 
 ```
 python infer_and_evaluate_temperature_series.py
 ```
 
-The generated files will be saved in the `prediction_data` folder.
+The generated files will be saved in the `prediction_data` folder. Alternatively, Alternatively, you may download the inference results from [this link](mylink) and place them in the `prediction_data` folder
+
 
 ---
 
