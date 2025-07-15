@@ -1,7 +1,7 @@
 # ConfSeq - Molecular Conformation Prediction 
 
 This directory contains the code and configuration files for the 3D molecular conformation prediction module of **ConfSeq**.
-
+![Overview](./assets/Figure_S1.png)
 > [!Note]
 > Ensure all commands below are executed inside the `confseq` Conda environment, with your working directory set to `conformation_prediction`.
 
