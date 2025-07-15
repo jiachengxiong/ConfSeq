@@ -26,7 +26,7 @@ To convert the raw data into ConfSeq-formatted text files, run:
 !python process_raw_data.py
 ```
 
-The generated files will be saved in the `processed_data` folder.  The expected folder structure is as follows:
+The generated files will be saved in the `processed_data` folder.  Alternatively, you may download the processed results from [this link](mylink) and place them in the `processed_data` folder. The expected folder structure is as follows:
 ```
 .
 └── processed_data/
@@ -59,8 +59,16 @@ To perform inference using different sampling temperatures, run:
 python infer_and_evaluate_temperature_series.py
 ```
 
-The generated files will be saved in the `prediction_data` folder. Alternatively, Alternatively, you may download the inference results from [this link](mylink) and place them in the `prediction_data` folder
-
+The generated files will be saved in the `prediction_data` folder. Alternatively, you may download the inference results from [this link](mylink) and place them in the `prediction_data` folder. The expected folder structure is as follows:
 
 ---
 
+## 📊 Evaluation
+
+To evaluate all generated results in the `prediction_data` folder, run:
+
+```
+python eval_all.py
+```
+
+The generated files will be saved in the `prediction_data` folder.
