@@ -45,7 +45,7 @@ The generated files will be saved in the `processed_data` folder.  The expected 
 To train the conformation prediction model, run:
 
 ```
-accelerate launch --multi_gpu --mixed_precision fp16 --num_processes 4 train.py
+accelerate launch --multi_gpu --mixed_precision fp16 --num_processes 4 train_model.py
 ```
 
 Alternatively, you may download a pre-trained model checkpoint from [this link](mylink) and place it in the `checkpoints` directory.
