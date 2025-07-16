@@ -35,7 +35,7 @@ import itertools
 from tqdm import tqdm
 from tqdm.contrib.concurrent import process_map  
 
-from ConfSeq_3_2 import get_mol_from_ConfSeq_pair
+from demo.ConfSeq import get_mol_from_ConfSeq_pair
 
 from transformers import BartForConditionalGeneration, BartConfig
 # import torch

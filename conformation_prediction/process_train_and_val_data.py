@@ -15,7 +15,7 @@ from scipy.stats import mode
 
 from rdkit import Chem
 import random
-from ConfSeq_3_2 import randomize_mol,get_ConfSeq_pair_from_mol,get_mol_from_ConfSeq_pair
+from demo.ConfSeq import randomize_mol,get_ConfSeq_pair_from_mol,get_mol_from_ConfSeq_pair
 import copy
 
 import pickle

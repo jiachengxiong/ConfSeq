@@ -8,7 +8,7 @@ This directory contains the code and configuration files for the 3D molecular co
 ---
 ## 📦 Data Preparation
 
-We use the **GEOM-Drugs** dataset to train and evaluate our model.  The original data were downloaded from [this repository](https://github.com/OdinZhang/SDEGen).  Alternatively, you can download the processed data from our cloud storage: [this link](mylink).
+We use the **GEOM-Drugs** dataset to train and evaluate our model.  The original data were downloaded from [this repository](https://github.com/OdinZhang/SDEGen).  Alternatively, you can download the raw data from  [this link](mylink).
 
 After downloading, place the files inside the `raw_data` folder. The expected folder structure is as follows:
 
@@ -22,8 +22,8 @@ After downloading, place the files inside the `raw_data` folder. The expected fo
 
 To convert the raw data into ConfSeq-formatted text files, run:
 
-```
-!python process_raw_data.py
+``` bash
+python process_raw_data.py
 ```
 
 The generated files will be saved in the `processed_data` folder.  Alternatively, you may download the processed results from [this link](mylink) and place them in the `processed_data` folder. The expected folder structure is as follows:
@@ -44,7 +44,7 @@ The generated files will be saved in the `processed_data` folder.  Alternatively
 
 To train the conformation prediction model, run:
 
-```
+```bash
 accelerate launch --multi_gpu --mixed_precision fp16 --num_processes 4 train_model.py
 ```
 
@@ -55,11 +55,11 @@ Alternatively, you may download a pre-trained model checkpoint from [this link](
 
 To perform inference using different sampling temperatures, run:
 
-```
+```bash
 python infer_and_evaluate_temperature_series.py
 ```
 
-The generated files will be saved in the `prediction_data` folder. Alternatively, you may download the inference results from [this link](mylink) and place them in the `prediction_data` folder. The expected folder structure is as follows:
+The generated files will be saved in the `prediction_data` folder. Alternatively, you may download the inference results from [this link](mylink) and place them in the `prediction_data` folder. 
 
 ---
 
@@ -67,7 +67,7 @@ The generated files will be saved in the `prediction_data` folder. Alternatively
 
 To evaluate all generated results in the `prediction_data` folder, run:
 
-```
+```bash
 python eval_all.py
 ```
 

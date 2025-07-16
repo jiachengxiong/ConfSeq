@@ -5,6 +5,10 @@ This repository accompanies the paper
 
 ![Overview](./assets/Figure_1.png)
 
+---
+
+## ⚡ Quick Access
+
 We provide ready-to-use ConfSeq-series models online at [Sciminer](https://sciminer.protonunfold.com/), including:
 
 * **Molecular Conformation Generation**: [ConfSeq-Conf-Gen](https://sciminer.protonunfold.com/utility?tool=Confseq%20Conf%20Gen)
@@ -56,7 +60,7 @@ A demonstration notebook illustrating how to convert a 3D molecule to a ConfSeq 
 
 ## 📦 Resources
 
-The datasets and pretrained model checkpoints are hosted at [this Zenodo link](link).
+The datasets and pretrained model checkpoints are hosted at [this link](link). Please download them and place them in the appropriate directories as specified in the `README.md` files of each subdirectory.
 
 ---
 
