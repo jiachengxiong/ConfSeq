@@ -1,6 +1,7 @@
-# ConfSeq - Unconditional Molecular Generation
+# ConfSeq - 3D molecular representation learning
 
 This directory contains the code and configuration files for the 3D molecular representation learning module of **ConfSeq**.
+![Overview](./assets/overview.png)
 
 > [!Note]
 > Ensure all commands below are executed inside the `confseq` Conda environment, with your working directory set to `representation_learning`.
@@ -17,11 +18,21 @@ After downloading, extract the archive and place its contents inside the `data` 
 The expected folder structure is as follows:
 
 ```
-data/
-├── DUDE/
-├── PCBA/
-├── PDB/
-└── Pairwise_molecular_similarity/
+.
+├── README.md
+├── infer_for_DUDE.ipynb
+├── infer_for_PCBA.ipynb
+├── view_PDB_embdding.ipynb
+├── train.py
+├── data
+│   ├── DUDE
+│   ├── PCBA
+│   ├── PDB
+│   └── Pairwise_molecular_similarity
+├── checkpoints
+    └── model_epoch_1.pth
+└── assets
+    └── overview.png
 ```
 
 ---
@@ -38,9 +49,9 @@ Alternatively, you may download a pre-trained model checkpoint from [this link](
 ---
 ## 📊 Evaluation
 
-To perform the evaluation, please run the `pcba.ipynb` and `dude.ipynb` notebooks.
+To perform the evaluation, please run the `infer_for_DUDE.ipynb` and `infer_for_PCBA.ipynb` notebooks.
 
 ---
 ## 🎨 Embedding Visualization
-To visualize the representations of ligands in the PDB, run `V.ipynb` notebooks.
+To visualize the representations of ligands in the PDB, run `view_PDB_embdding.ipynb` notebooks.
 
