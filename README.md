@@ -67,8 +67,7 @@ The ConfSeq-series models are organized into separate directories according to t
 - **Shape-conditioned Generation**: All related files are located in the `/shape_conditioned_generation/` directory.
 - **Representation Learning**: All related files are located in the `/representation_learning/` directory.
 
-Each directory contains its own `README.md` file with detailed usage instructions.  
-Please refer to the corresponding `README.md` for instructions on how to run each model.
+Each directory contains a `README.md` file with detailed instructions on how to run the corresponding model.
 
 ---
 
