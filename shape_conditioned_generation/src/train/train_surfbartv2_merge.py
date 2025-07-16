@@ -25,20 +25,21 @@ from src.utils.reconstruct import convert_tdsmiles_to_mol, convert_smiles_to_mol
 
 def compute_similarity_statistics(df: pd.DataFrame) -> pd.DataFrame:
     """
-    按 group_id 分组后，计算 shape_similarity 和 graph_similarity 的组内均值，
-    并对这些组均值分别计算整体均值和标准差，最终以“均值±标准差”字符串形式返回。
+    After grouping by group_id, calculate the intra-group mean of shape_similarity and graph_similarity,
+    and then calculate the overall mean and standard deviation for these group means, 
+    finally returning the result as a "mean±std" string.
 
-    参数：
-    - df: DataFrame，必须包含以下三列
-        • group_id          ：分组标识
-        • shape_similarity  ：形状相似度
-        • graph_similarity  ：图谱（Tanimoto）相似度
+    Parameters:
+    - df: DataFrame, must contain the following three columns
+        • group_id          : Group identifier
+        • shape_similarity  : Shape similarity
+        • graph_similarity  : Graph (Tanimoto) similarity
 
-    返回：
-    - summary: DataFrame，索引为 ['shape', 'graph']，
-        列为 ['mean±std']，数值均为格式化后的字符串形式。
+    Returns:
+    - summary: DataFrame, with index ['shape', 'graph'],
+        and column ['mean±std'], where the values are formatted strings.
     """
-    # 1. 按组聚合，得到每组的均值
+    # 1. Aggregate by group to get the mean of each group
     df_group = (
         df
         .groupby('group_id', as_index=False)
@@ -48,11 +49,11 @@ def compute_similarity_statistics(df: pd.DataFrame) -> pd.DataFrame:
         )
     )
 
-    # 2. 分别计算“组均值”的整体均值 & 标准差
+    # 2. Calculate the overall mean & standard deviation of the "group means"
     shape_mean_of_means = df_group['shape_mean'].mean()
     graph_mean_of_means = df_group['graph_mean'].mean()
 
-    # 3. 格式化为 “均值±标准差” 的字符串，保留三位小数
+    # 3. Format as a "mean±std" string, keeping three decimal places
     summary = pd.DataFrame({
         'Avg_shape': [
             shape_mean_of_means
@@ -78,7 +79,7 @@ def main():
     tokenizer = WhitespaceTokenizer()
     set_seed(config['train']['seed'])
 
-    # 加载数据
+    # Load data
     dataset = PointCloudDataset(config['data'], tokenizer, max_length=config['model']['bart']['max_position_embeddings'])
     train_size = len(dataset) - 1000
     train_dataset, valid_dataset = random_split(dataset, [train_size, len(dataset) - train_size])
@@ -88,7 +89,7 @@ def main():
     train_smiles = load_pickle(config['data']['train_smiles_dir'])
     print(f'Loaded {len(train_smiles)} training smiles from MOSES2 dataset.')
 
-    # 加载模型
+    # Load model
     model = SurfaceBartv2(config['model'], tokenizer=tokenizer)
     if config['train']['resume_path']:
         model.load_weights(config['train']['resume_path'])
@@ -96,7 +97,7 @@ def main():
     else:
         print("Training from scratch.")
 
-    # 定义自定义评估指标
+    # Define custom evaluation metrics
     def compute_metrics(eval_pred):
         pred_ids = eval_pred.predictions
         label_ids = eval_pred.label_ids
@@ -109,7 +110,7 @@ def main():
         batched_gen_smiles = [gen_smiles[i : i+config['model']['generation_config']['num_return_sequences']]
                               for i in range(0, len(gen_smiles), config['model']['generation_config']['num_return_sequences'])]
     
-        # 根据配置选择不同的分子构建和指标计算方式
+        # Select different molecule construction and metric calculation methods based on the configuration
         try:
             all_results_pred = process_map(
                 convert_tdsmiles_to_mol,
@@ -134,12 +135,12 @@ def main():
                                                             num_samples=len(smiles_list))
                 basic_metrics = pd.concat([basic_metrics, basic_metrics_])
 
-            # 对预测结果进行分批处理（用于后续相似度计算）
+            # Batch process the prediction results (for subsequent similarity calculation)
             batch_size = config['model']['generation_config']['num_return_sequences']
             batched_results = [all_results_pred[i : i+batch_size] 
                             for i in range(0, len(all_results_pred), batch_size)]
 
-            # 仅保留有效的结果（分子转换错误会返回字符串“Error:”）
+            # Keep only valid results (molecule conversion errors will return the string "Error:")
             gen_data = []
             for i, results in enumerate(batched_results):
                 clean = []
@@ -150,7 +151,7 @@ def main():
                         clean.append(result)
                 gen_data.append(clean)
 
-            # 计算相似度（形状相似度和Tanimoto）
+            # Calculate similarity (shape similarity and Tanimoto)
             similarity_df = compute_similarity_dataframe(
                 all_results_label,
                 gen_data,
@@ -158,7 +159,7 @@ def main():
                 has_scores=False)
             similarity_summary = compute_similarity_statistics(similarity_df)
 
-            # 汇总所有指标
+            # Summarize all metrics
             metrics = {
                 'avg_Validity': np.mean(basic_metrics['Validity']),
                 'avg_Uniqueness': np.mean(basic_metrics['Uniqueness']),
@@ -184,7 +185,7 @@ def main():
         return metrics
 
 
-    # 训练参数设定
+    # Set training parameters
     training_args = Seq2SeqTrainingArguments(
         output_dir=config['train']['output_dir'],
         overwrite_output_dir=config['train']['overwrite_output_dir'],
@@ -216,7 +217,7 @@ def main():
         early_stopping_threshold=config['train']['early_stopping_threshold'],
     )
 
-    # 创建Trainer
+    # Create Trainer
     trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
@@ -230,7 +231,7 @@ def main():
 
     print(f"Total number of parameters: {trainer.get_num_trainable_parameters() / 1e6:.2f}M")
 
-    # 开始训练
+    # Start training
     trainer.train()
 
 

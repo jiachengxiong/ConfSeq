@@ -16,7 +16,7 @@ def get_bond_symbol(bond_n):
 
 def cal_bond_distance_single(mol, top_bond_syms):
     """
-    针对单个分子计算各指定键类型的键长信息。
+    Calculate bond length information for each specified bond type for a single molecule.
     """
     distance_dict = {bond_sym: [] for bond_sym in top_bond_syms}
     conf = mol.GetConformer()
@@ -32,23 +32,23 @@ def cal_bond_distance_single(mol, top_bond_syms):
 
 def cal_bond_distance(mol_list, top_bond_syms, max_workers=20, chunksize=100):
     """
-    利用 process_map 并行计算分子中指定键类型的键长统计信息。
+    Use process_map to calculate bond length statistics for specified bond types in molecules in parallel.
 
-    参数：
-        mol_list (list): 分子对象列表。
-        top_bond_syms (iterable): 需要统计键长的键符号集合或列表。
-        max_workers (int): 最大进程数，默认为 None，会根据系统自动分配。
-        chunksize (int): 每个进程一次性分配的任务数量，推荐根据任务粒度进行调整。
+    Parameters:
+        mol_list (list): List of molecule objects.
+        top_bond_syms (iterable): Set or list of bond symbols for which to calculate bond lengths.
+        max_workers (int): Maximum number of processes, defaults to None, automatically assigned by system.
+        chunksize (int): Number of tasks assigned to each process at once, recommended to adjust based on task granularity.
 
-    返回：
-        dict: 一个字典，其中键为键符号，值为对应的键长列表。
+    Returns:
+        dict: A dictionary where keys are bond symbols and values are corresponding bond length lists.
     """
-    # 通过 partial 绑定 top_bond_syms 参数
+    # Bind top_bond_syms parameter via partial
     worker_func = partial(cal_bond_distance_single, top_bond_syms=top_bond_syms)
-    # 利用 process_map 并行处理分子列表
+    # Use process_map to process molecule list in parallel
     results = process_map(worker_func, mol_list, max_workers=max_workers, chunksize=chunksize)
     
-    # 合并所有进程返回的结果
+    # Merge results returned from all processes
     bond_distance_dict = {bond_sym: [] for bond_sym in top_bond_syms}
     for result in results:
         for bond_sym in top_bond_syms:
@@ -108,24 +108,24 @@ def get_bond_pair_symbol(bond_pairs):
 
 def worker_angle(mol, top_angle_syms):
     """
-    针对单个分子计算各指定键角的角度信息。
+    Calculate bond angle information for each specified angle for a single molecule.
 
-    参数：
-        mol: 单个分子对象。
-        top_angle_syms (iterable): 需要统计键角的键角符号集合或列表。
+    Parameters:
+        mol: Single molecule object.
+        top_angle_syms (iterable): Set or list of bond angle symbols for which to calculate angles.
 
-    返回：
-        dict: 字典，键为键角符号，值为该分子中对应的键角角度列表。
+    Returns:
+        dict: Dictionary where keys are bond angle symbols and values are corresponding bond angle lists for this molecule.
     """
-    # 初始化字典，每个键角符号对应一个空列表
+    # Initialize dictionary with each angle symbol corresponding to an empty list
     angle_dict = {angle_sym: [] for angle_sym in top_angle_syms}
     conf = mol.GetConformer()
     bond_pairs = get_bond_pairs(mol)
     for bond_pair in bond_pairs:
-        # 获取正向的键角符号及对应的原子索引三元组
+        # Get forward bond angle symbol and corresponding atom index triplet
         angle_sym, ijk = get_bond_pair_symbol(bond_pair)
         i, j, k = ijk
-        # 获取反向的键角符号（通过将bond_pair反转）
+        # Get reverse bond angle symbol (by reversing bond_pair)
         reverse_angle_sym, _ = get_bond_pair_symbol(bond_pair[::-1])
         if angle_sym in top_angle_syms:
             angle_dict[angle_sym].append(GetAngleDeg(conf, i, j, k))
@@ -135,27 +135,27 @@ def worker_angle(mol, top_angle_syms):
 
 def cal_bond_angle(mol_list, top_angle_syms, max_workers=20, chunksize=100):
     """
-    利用 process_map 并行计算分子中指定键角的角度统计信息。
+    Use process_map to calculate bond angle statistics for specified bond angles in molecules in parallel.
 
-    参数：
-        mol_list (list): 分子对象列表。
-        top_angle_syms (iterable): 需要统计键角的键角符号集合或列表。
-        max_workers (int): 最大进程数，默认为 10
-        chunksize (int): 每个工作进程一次分配的任务数量，根据任务粒度适当调整。
+    Parameters:
+        mol_list (list): List of molecule objects.
+        top_angle_syms (iterable): Set or list of bond angle symbols for which to calculate angles.
+        max_workers (int): Maximum number of processes, defaults to 10
+        chunksize (int): Number of tasks assigned to each worker process at once, adjust appropriately based on task granularity.
 
-    返回：
-        dict: 一个字典，其中键为键角符号，值为对应的键角角度列表（单位：度）。
+    Returns:
+        dict: A dictionary where keys are bond angle symbols and values are corresponding bond angle lists (in degrees).
     """
-    # 使用 partial 将 top_angle_syms 参数绑定到 worker_angle 函数中，
-    # 使得 process_map 传入的仅为单个分子对象
+    # Use partial to bind top_angle_syms parameter to worker_angle function,
+    # so that process_map only passes individual molecule objects
     worker_func = partial(worker_angle, top_angle_syms=top_angle_syms)
     
-    # 利用 process_map 对分子列表进行并行处理
+    # Use process_map to process molecule list in parallel
     results = process_map(worker_func, mol_list, max_workers=max_workers, chunksize=chunksize)
     
-    # 初始化最终统计结果字典
+    # Initialize final statistics result dictionary
     bond_angle_dict = {angle_sym: [] for angle_sym in top_angle_syms}
-    # 合并各个进程返回的结果
+    # Merge results returned from each process
     for result in results:
         for angle_sym in top_angle_syms:
             bond_angle_dict[angle_sym].extend(result[angle_sym])
@@ -307,25 +307,25 @@ def worker_dihedral(mol, top_dihedral_syms):
 
 def cal_dihedral_angle(mol_list, top_dihedral_syms, max_workers=20, chunksize=100):
     """
-    利用 process_map 并行计算分子中指定二面角的角度统计信息。
+    Use process_map to calculate dihedral angle statistics for specified dihedral angles in molecules in parallel.
 
-    参数：
-        mol_list (list): 分子对象列表。
-        top_dihedral_syms (iterable): 需要统计二面角的二面角符号集合或列表。
-        max_workers (int): 最大进程数，默认为 None，由系统自动分配。
-        chunksize (int): 每个工作进程一次性分配的任务数量，根据任务粒度适当调整。
+    Parameters:
+        mol_list (list): List of molecule objects.
+        top_dihedral_syms (iterable): Set or list of dihedral angle symbols for which to calculate angles.
+        max_workers (int): Maximum number of processes, defaults to None, automatically assigned by system.
+        chunksize (int): Number of tasks assigned to each worker process at once, adjust appropriately based on task granularity.
 
-    返回：
-        dict: 一个字典，其中键为二面角符号，值为对应的二面角角度列表（单位：度）。
+    Returns:
+        dict: A dictionary where keys are dihedral angle symbols and values are corresponding dihedral angle lists (in degrees).
     """
-    # 通过 partial 将 top_dihedral_syms 参数绑定到 worker_dihedral 中，
-    # 从而使得 process_map 调用时仅传入单个分子对象
+    # Bind top_dihedral_syms parameter to worker_dihedral via partial,
+    # so that process_map only passes individual molecule objects
     worker_func = partial(worker_dihedral, top_dihedral_syms=top_dihedral_syms)
     
-    # 利用 process_map 对 mol_list 中的每个分子并行计算二面角信息
+    # Use process_map to calculate dihedral angle information for each molecule in mol_list in parallel
     results = process_map(worker_func, mol_list, max_workers=max_workers, chunksize=chunksize)
     
-    # 合并各个进程返回的结果
+    # Merge results returned from each process
     dihedral_angle_dict = {dihedral_sym: [] for dihedral_sym in top_dihedral_syms}
     for result in results:
         for dihedral_sym in top_dihedral_syms:

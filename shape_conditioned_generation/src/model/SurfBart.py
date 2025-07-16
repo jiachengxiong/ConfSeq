@@ -108,13 +108,13 @@ class SurfaceBartv2(nn.Module):
         self.mlp = MLP(
             input_dim=512,
             hidden_dim=config.mlp.hidden_dim,
-            output_dim=bart_config.hidden_size,  # Bart 的 hidden_size
+            output_dim=bart_config.hidden_size,  # Bart's hidden_size
             num_layers=config.mlp.num_layers,
             dropout_rate=config.mlp.dropout_rate,
             activation_function=activation_function,
         )
 
-        # 这里依然使用 BartForConditionalGeneration，但我们会通过 encoder_outputs 跳过其内部 encoder
+        # Still use BartForConditionalGeneration here, but we'll skip its internal encoder through encoder_outputs
         self.bart = BartForConditionalGeneration(bart_config)
 
         if 'generation_config' not in config:
@@ -130,33 +130,33 @@ class SurfaceBartv2(nn.Module):
         else:
             norm = None
 
-        # 1. 点云特征提取
+        # 1. Point cloud feature extraction
         l0_xyz, l0_norm, l0_points = self.sc0(pointcloud, norm, None)
         l1_xyz, l1_norm, l1_points = self.sc1(l0_xyz, l0_norm, l0_points)
         l2_xyz, l2_norm, l2_points = self.sc2(l1_xyz, l1_norm, l1_points)
         l3_xyz, l3_norm, l3_points = self.sc3(l2_xyz, l2_norm, l2_points)
         l4_xyz, l4_norm, l4_points = self.sc4(l3_xyz, l3_norm, l3_points)
 
-        # 2. 维度变换 + MLP
-        #    l4_points形状一般是 [batch_size, feature_dim, 1] 或 [batch_size, feature_dim, n], 视具体实现而定
-        x = l4_points.permute(0, 2, 1)  # 变成 [batch_size, seq_len, feature_dim]
+        # 2. Dimension transformation + MLP
+        #    The shape of l4_points is generally [batch_size, feature_dim, 1] or [batch_size, feature_dim, n], depending on the specific implementation
+        x = l4_points.permute(0, 2, 1)  # Change to [batch_size, seq_len, feature_dim]
         x = self.mlp(x)                # [batch_size, seq_len, hidden_size]
 
-        # 如果 attention_mask=None，需要自己构造
+        # If attention_mask=None, need to construct it ourselves
         if attention_mask is None:
             attention_mask = torch.ones((B, x.size(1)), dtype=torch.long, device=x.device)
 
-        # 3. 显式构造 encoder_outputs，跳过 BART Encoder
-        #    BaseModelOutput 接受 last_hidden_state, hidden_states, attentions 等参数
+        # 3. Explicitly construct encoder_outputs, skipping the BART Encoder
+        #    BaseModelOutput accepts parameters such as last_hidden_state, hidden_states, attentions
         encoder_outputs = BaseModelOutput(last_hidden_state=x)
 
-        # 4. 调用 BART: 把 encoder_outputs 显式传进去，然后让 BART 的 Decoder 做解码
-        #    labels 不为空时，会在 forward 里计算交叉熵损失
+        # 4. Call BART: explicitly pass in encoder_outputs, and then let BART's Decoder do the decoding
+        #    When labels is not empty, the cross-entropy loss will be calculated in forward
         outputs = self.bart(
             encoder_outputs=encoder_outputs,
             attention_mask=attention_mask,
             labels=labels,
-            use_cache=False  # 可以根据需要设置
+            use_cache=False  # Can be set as needed
         )
         
         return outputs
@@ -173,7 +173,7 @@ class SurfaceBartv2(nn.Module):
         normals=None,
         generation_config=None,
         attention_mask=None,
-        prefix_ids=None,  # <--- 新增参数: [token1, token2, ...]
+        prefix_ids=None,  # <--- Added Parameters: [token1, token2, ...]
         logits_processor=None,
         **kwargs
     ):
@@ -183,7 +183,7 @@ class SurfaceBartv2(nn.Module):
         B, _, _ = pointcloud.shape if pointcloud is not None else (1, 1, 1)
         norm = normals if self.normal_channel else None
 
-        # 1. 点云特征提取...
+        # 1. Point cloud feature extraction...
         l0_xyz, l0_norm, l0_points = self.sc0(pointcloud, norm, None)
         l1_xyz, l1_norm, l1_points = self.sc1(l0_xyz, l0_norm, l0_points)
         l2_xyz, l2_norm, l2_points = self.sc2(l1_xyz, l1_norm, l1_points)
@@ -198,18 +198,18 @@ class SurfaceBartv2(nn.Module):
 
         encoder_outputs = BaseModelOutput(last_hidden_state=x)
 
-        # 如果传了 generation_config 就用，否则用自己的 self.generation_config
+        # If generation_config is passed, use it; otherwise use self.generation_config
         if generation_config is None:
             gen_config = self.generation_config
         else:
             gen_config = GenerationConfig(**generation_config)
 
-        # 3. 如果 prefix_ids 不为空，就构建 decoder_input_ids
+        # 3. If prefix_ids is not empty, construct decoder_input_ids
         decoder_input_ids = None
         if prefix_ids is not None:
-            # 假设 batch_size=B，你需要让 prefix_ids 形状匹配 [B, prefix_len]
-            # 示例：如果只是想让所有样本用同样的 prefix_ids，可这样做
-            # prefix_ids 是 list[int]
+            # Assuming batch_size=B, you need to make prefix_ids shape match [B, prefix_len]
+            # Example: if you want all samples to use the same prefix_ids, you can do this
+            # prefix_ids is list[int]
             B = x.size(0)  # x: [B, seq_len, hidden_dim]
             if isinstance(prefix_ids, list):
                 prefix_ids = torch.tensor(prefix_ids, dtype=torch.long, device=x.device)
@@ -222,14 +222,14 @@ class SurfaceBartv2(nn.Module):
             generation_config=gen_config,
             return_dict_in_generate=True,
             output_scores=True,
-            decoder_input_ids=decoder_input_ids,  # <--- 这里
-            logits_processor=logits_processor,  # <--- 新增参数
+            decoder_input_ids=decoder_input_ids,  # <--- here
+            logits_processor=logits_processor,  # <--- new parameter
             **kwargs
         )
 
         generated_ids = outputs.sequences
         
-        # 计算分数的逻辑省略...
+        # Logic for calculating scores omitted...
         transition_scores = self.bart.compute_transition_scores(
             outputs.sequences, outputs.scores, normalize_logits=True
         )
@@ -258,24 +258,24 @@ class SurfaceBartv2(nn.Module):
         else:
             norm = None
 
-        # 1. 点云特征提取
+        # 1. Point cloud feature extraction
         l0_xyz, l0_norm, l0_points = self.sc0(pointcloud, norm, None)
         l1_xyz, l1_norm, l1_points = self.sc1(l0_xyz, l0_norm, l0_points)
         l2_xyz, l2_norm, l2_points = self.sc2(l1_xyz, l1_norm, l1_points)
         l3_xyz, l3_norm, l3_points = self.sc3(l2_xyz, l2_norm, l2_points)
         l4_xyz, l4_norm, l4_points = self.sc4(l3_xyz, l3_norm, l3_points)
 
-        # 2. 维度变换 + MLP
+        # 2. Dimension transformation + MLP
         x = l4_points.permute(0, 2, 1)
         x = self.mlp(x)
 
         if attention_mask is None:
             attention_mask = torch.ones((B, x.size(1)), dtype=torch.long, device=x.device)
 
-        # 3. 构造 encoder_outputs
+        # 3. Construct encoder_outputs
         encoder_outputs = BaseModelOutput(last_hidden_state=x)
 
-        # 4. 处理 generation_config
+        # 4. Process generation_config
         if generation_config is None:
             gen_config = self.generation_config
         else:
@@ -283,23 +283,23 @@ class SurfaceBartv2(nn.Module):
 
         decoder_input_ids = None
         if prefix_ids is not None:
-            # 假设 batch_size=B，你需要让 prefix_ids 形状匹配 [B, prefix_len]
-            # 示例：如果只是想让所有样本用同样的 prefix_ids，可这样做
-            # prefix_ids 是 list[int]
+            # Assuming batch_size=B, you need to make prefix_ids shape match [B, prefix_len]
+            # Example: if you want all samples to use the same prefix_ids, you can do this
+            # prefix_ids is list[int]
             B = x.size(0)  # x: [B, seq_len, hidden_dim]
             if isinstance(prefix_ids, list):
                 prefix_ids = torch.tensor(prefix_ids, dtype=torch.long, device=x.device)
             prefix_ids = prefix_ids.unsqueeze(0).expand(B, -1)
             decoder_input_ids = prefix_ids  # [B, prefix_len]
 
-        # 5. 使用 BART 的 generate()，但把编码器结果直接传进去
+        # 5. Use BART's generate(), but pass the encoder results directly
         outputs = self.bart.generate(
             encoder_outputs=encoder_outputs, 
             attention_mask=attention_mask,
             generation_config=gen_config,
-            decoder_input_ids=decoder_input_ids,  # <--- 这里
+            decoder_input_ids=decoder_input_ids,  # <--- here
             **kwargs
         )
 
         return outputs
-    
+

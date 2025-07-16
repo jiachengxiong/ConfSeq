@@ -94,8 +94,8 @@ def prepare_dataloader(data_config, tokenizer, max_length, batch_size):
 def generate_outputs(model, dataloader, tokenizer, generation_config, upscale_temp=1.0, downscale_temp=1.0):
     """Generate outputs using the model and DataLoader."""
     group_ranges = [(0, 99), (99, 460)]
-    group_temps = [upscale_temp, downscale_temp]  # 这里的温度可以根据需要进行调整
-        # 实例化新的处理器
+    group_temps = [upscale_temp, downscale_temp]  # Temperature can be adjusted as needed
+        # Instantiate new processor
     custom_processor = GroupProbPreservingTempProcessor(
         group_ranges=group_ranges,
         group_temps=group_temps,

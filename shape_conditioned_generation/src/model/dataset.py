@@ -150,7 +150,7 @@ class PointCloudDataset(Dataset):
 
         self._connect_db()                       
 
-        # 若碰见坏样本，随机替换
+        # If encountering a bad sample, randomly replace it
         if idx in self.skip_idx:
             return self.__getitem__(random.randint(0, len(self.keys) - 1))
 
@@ -167,38 +167,38 @@ class PointCloudDataset(Dataset):
             return self.__getitem__(random.randint(0, len(self.keys) - 1))
 
         # -------------------------------------------------------------- #
-        # 处理轻量记录：若缺失 pointcloud，则用 pc_key / parent_key 取回
+        # Handle lightweight records: if missing pointcloud, retrieve using pc_key / parent_key
         # -------------------------------------------------------------- #
         if "pointcloud" not in datum:
             ref_key = datum.get("pc_key") or datum.get("parent_key")
             if ref_key is None:
-                raise KeyError("轻量记录缺少 'pc_key' / 'parent_key' 字段。")
+                raise KeyError("Lightweight record missing 'pc_key' / 'parent_key' field.")
             ref_buf = self.txn.get(ref_key)
             if ref_buf is None:
                 self.skip_idx.append(idx)
                 return self.__getitem__(random.randint(0, len(self.keys) - 1))
             base = pickle.loads(ref_buf)
-            # 把点云信息补进 datum，后续流程统一
+            # Add point cloud information to datum for unified processing
             datum["pointcloud"] = base["pointcloud"]
             datum["normals"]    = base["normals"]
 
-        # -------------------- Tensor 化 -------------------- #
+        # -------------------- Tensorization -------------------- #
         pc      = torch.as_tensor(datum["pointcloud"], dtype=torch.float32)
         normals = torch.as_tensor(datum["normals"],    dtype=torch.float32)
 
-        # -------------------- 文本 ------------------------ #
+        # -------------------- Text ------------------------ #
         if "TD_smiles" not in datum or not datum["TD_smiles"]:
-            # 测试集: 仅返回点云
+            # Test set: return only point cloud
             return {"pointcloud": pc, "normals": normals}
 
         if self.tokenizer is None:
-            raise ValueError("需要 tokenizer 以处理文本字段。")
+            raise ValueError("Tokenizer is required to process text fields.")
 
         td_text: str = datum["TD_smiles"]
         if self.use_smiles:
             mol = Chem.MolFromMolBlock(datum["rdmol"])
             if mol is None:
-                raise RuntimeError("无法解析 rdmol → MolBlock")
+                raise RuntimeError("Unable to parse rdmol → MolBlock")
 
             if td_text.lstrip().startswith("<std>"):
                 prefix = "<std>"
@@ -207,7 +207,7 @@ class PointCloudDataset(Dataset):
                 prefix = "<aug>"
                 smiles = self._make_smiles_from_mol(mol, mode="aug")
             else:
-                # 无前缀：保持旧行为
+                # No prefix: keep old behavior
                 prefix = ""
                 smiles = self._make_smiles_from_mol(mol, mode="std")
 

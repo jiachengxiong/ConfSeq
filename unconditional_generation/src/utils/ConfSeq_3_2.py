@@ -18,27 +18,27 @@ import timeout_decorator
 def rm_invalid_chirality(mol):
     mol = copy.deepcopy(mol)
     """
-    找出分子中同时出现在三个环中的原子。
+    Find atoms that appear in three rings simultaneously in a molecule.
     
-    参数:
-        mol: RDKit 分子对象
-    返回:
-        List[int]: 同时出现在三个环中的原子的索引列表
+    Parameters:
+        mol: RDKit molecule object
+    Returns:
+        List[int]: List of indices of atoms that appear in three rings simultaneously
     """
-    # 获取分子的所有环（SSSR：最小集的简单环）
+    # Get all rings in the molecule (SSSR: Smallest Set of Smallest Rings)
     rings = rdmolops.GetSymmSSSR(mol)
 
-    # 创建一个字典，记录每个原子出现在多少个环中
+    # Create a dictionary to record how many rings each atom appears in
     atom_in_rings_count = {}
 
-    # 遍历所有环，统计每个原子出现的次数
+    # Traverse all rings and count occurrences of each atom
     for ring in rings:
         for atom_idx in ring:
             if atom_idx not in atom_in_rings_count:
                 atom_in_rings_count[atom_idx] = 0
             atom_in_rings_count[atom_idx] += 1
 
-    # 找出那些同时出现在三个环中的原子
+    # Find atoms that appear in exactly three rings
     atoms_in_3_rings = [atom for atom, count in atom_in_rings_count.items() if count == 3]
 
     for atom_idx in atoms_in_3_rings:
@@ -49,10 +49,10 @@ def rm_invalid_chirality(mol):
 
 def randomize_mol(mol):
     """
-    生成随机化的 SMILES 表示。
+    Generate randomized SMILES representation.
     """
     atom_indices = list(range(mol.GetNumAtoms()))
-    random.shuffle(atom_indices)  # 随机打乱原子顺序
+    random.shuffle(atom_indices)  # Randomly shuffle atom order
     randomized_mol = rdmolops.RenumberAtoms(mol, atom_indices)
     return randomized_mol
 
@@ -75,7 +75,7 @@ def pick_neighbor(mol,neighbors):
         
     return min_
     
-def get_st_dihedrals(mol):  # 可以改成提供选项的
+def get_st_dihedrals(mol):  # Can be changed to provide options
     
     # List to store single bonds and their neighbors
     dihedrals = []
@@ -95,7 +95,7 @@ def get_st_dihedrals(mol):  # 可以改成提供选项的
             neighbors2 = [n.GetIdx() for n in mol.GetAtomWithIdx(idx2).GetNeighbors() if n.GetIdx() != idx1]
             
 
-            if len(set(neighbors1+neighbors2)) == len(neighbors1) + len(neighbors2):  #3元环是刚性的
+            if len(set(neighbors1+neighbors2)) == len(neighbors1) + len(neighbors2):  #3-membered ring is rigid
 
                 if len(neighbors1) > 0 and len(neighbors2) > 0:
 
@@ -127,7 +127,7 @@ def get_st_dihedrals(mol):  # 可以改成提供选项的
 
 #     count = 0
 #     for i in range(len(smiles_BE)):
-#         if smiles_BE[i] in ['-','=','#',':','/','\\'] and smiles_BE[i+1] != ']': #有错[C2-]
+#         if smiles_BE[i] in ['-','=','#',':','/','\\'] and smiles_BE[i+1] != ']': #Error in [C2-]
 #             bond_idx_token_idx_dic[count] = i
 #             token_idx_bond_idx_dic[i] = count
 #             count += 1
@@ -222,7 +222,7 @@ def get_TD_smiles_from_mol(mol):
 
     smiles_BE = Chem.MolToSmiles(mol,canonical = False,allBondsExplicit = True)
     bond_idx_token_idx_dic,token_idx_bond_idx_dic,atom_pairs = get_bond_token_atom_pairs(smiles_BE)
-    dihedrals = sorted(dihedrals, key=lambda x: atom_pairs.index((x[1], x[2])))    # 这里往上的部分和get sorted  dihedrals 一样
+    dihedrals = sorted(dihedrals, key=lambda x: atom_pairs.index((x[1], x[2])))    # The part above is the same as get sorted dihedrals
     t_smiles_lis = replace_smiles_BE(smiles_BE,token_idx_bond_idx_dic,atom_pairs,atom_pair_dihedrals_dic)
     i_smiles_lis,TD_smiles_lis = condense_t_smiles_lis(list(smiles_BE),t_smiles_lis,token_idx_bond_idx_dic)
     
@@ -250,10 +250,10 @@ def get_p_chiral_dic(ran_mol):
     p_chiral_ran_mol = copy.deepcopy(ran_mol)
 
     for atom in p_chiral_ran_mol.GetAtoms():
-        if atom.GetSymbol() == 'N':  # 找到氮原子
-            hyb = atom.GetHybridization()  # 获取杂化类型
-            if hyb == Chem.rdchem.HybridizationType.SP3:  # 检查是否为 sp3 杂化
-                atom.SetFormalCharge(1)  # 设置电荷为 +1    
+        if atom.GetSymbol() == 'N':  # Find nitrogen atom
+            hyb = atom.GetHybridization()  # Get hybridization type
+            if hyb == Chem.rdchem.HybridizationType.SP3:  # Check if it's sp3 hybridization
+                atom.SetFormalCharge(1)  # Set charge to +1    
                 
     isotope_base = 1 
     for atom in p_chiral_ran_mol.GetAtoms():
@@ -261,7 +261,7 @@ def get_p_chiral_dic(ran_mol):
         isotope_base += 1
         
     p_chiral_ran_mol = Chem.MolFromMolBlock(Chem.MolToMolBlock(p_chiral_ran_mol))
-    p_chiral_ran_mol = Chem.MolFromSmiles(Chem.MolToSmiles(p_chiral_ran_mol,canonical = False)) #很奇怪不这么整下有的手性计算会有bug#
+    p_chiral_ran_mol = Chem.MolFromSmiles(Chem.MolToSmiles(p_chiral_ran_mol,canonical = False)) #Strange, without this some chirality calculations will have bugs#
     Chem.SanitizeMol(p_chiral_ran_mol)
     p_chiral_ran_mol = rm_invalid_chirality(p_chiral_ran_mol)
     #print(Chem.MolToSmiles(p_chiral_ran_mol,canonical = False))
@@ -274,11 +274,11 @@ def get_p_chiral_dic(ran_mol):
             if atom.GetIdx() not in chiral_dic:
                 #print(atom.GetIdx())
                 #atom.GetChiralTag()
-                #chiral_dic[atom.GetIdx()] #不理解，为什么加了这个，会更正确
+                #chiral_dic[atom.GetIdx()] #Don't understand why adding this makes it more correct
                 #atom.GetChiralTag()
                 p_chiral_dic[atom.GetIdx()] = atom.GetChiralTag()
 
-        #2025.3.1补充, N上三个成平面
+        #2025.3.1 supplement, three atoms on N form a plane
         neibors = [i.GetIsotope() for i in atom.GetNeighbors()]
         if atom.GetSymbol() == "N" and len(set(neibors)) == 3 and str(atom.GetChiralTag()) == 'CHI_UNSPECIFIED' and atom.GetChiralTag() == Chem.rdchem.HybridizationType.SP3:
             if random.random() > 0.5:
@@ -303,7 +303,7 @@ def find_all_equ_atoms(mol):
             neighbor_ranks = [ranks[n.GetIdx()] for n in neighbors]
             neighbor_degrees = [n.GetDegree() for n in neighbors]
 
-            # 统计每个等级的频率
+            # Count frequency of each level
             rank_count = {}
             for rank in neighbor_ranks:
                 if rank in rank_count:
@@ -312,10 +312,10 @@ def find_all_equ_atoms(mol):
                     rank_count[rank] = 1
             
             #print(rank_count)
-            # 检查是否有至少三个化学等价的邻居原子且其度为1
+            # Check if there are at least three chemically equivalent neighbor atoms with degree 1
             for rank, count in rank_count.items():
-                if count >= 3 and all(neighbor_degrees[i] == 1 for i, r in enumerate(neighbor_ranks) if r == rank):   #这里应该不需要邻居度为1
-                    target_atoms.append(atom.GetIdx())  # 收集符合条件的原子索引
+                if count >= 3 and all(neighbor_degrees[i] == 1 for i, r in enumerate(neighbor_ranks) if r == rank):   #Neighbor degree 1 should not be required here
+                    target_atoms.append(atom.GetIdx())  # Collect indices of qualifying atoms
             
     return target_atoms
 
@@ -330,7 +330,7 @@ def find_part_equ_atoms(mol,dihedral_list,p_chiral_dic):
         for dihedral in dihedral_list:
             if i == dihedral[1]:
                 neibors = [neighbor.GetIdx() for neighbor in mol.GetAtomWithIdx(dihedral[1]).GetNeighbors()]
-                if len(neibors) == 4:  #如果不等于4，说明有一个氢，不可能和另外一个重原子相同
+                if len(neibors) == 4:  #If not equal to 4, there's a hydrogen, can't be the same as another heavy atom
                     neibors.remove(dihedral[0])
                     neibors.remove(dihedral[2])
         
@@ -345,7 +345,7 @@ def find_part_equ_atoms(mol,dihedral_list,p_chiral_dic):
             elif i == dihedral[2]:
     
                 neibors = [neighbor.GetIdx() for neighbor in mol.GetAtomWithIdx(dihedral[2]).GetNeighbors()]
-                if len(neibors) == 4:  #如果不等于4，说明有一个氢，不可能和另外一个重原子相同
+                if len(neibors) == 4:  #If not equal to 4, there's a hydrogen, can't be the same as another heavy atom
                     neibors.remove(dihedral[1])
                     neibors.remove(dihedral[3])
         
@@ -429,15 +429,15 @@ def add_chiral_to_TD_smiles_in_smiles(p_chiral_dic,dihedrals,TD_smiles,in_smiles
         
     return  ' '.join(new_TD_smiles_lis),' '.join(new_in_smiles_lis)
 
-##########################2025_3_2加角度
+##########################2025_3_2 added Angle
 
 def is_atom_in_ring(atom, mol):
-    """判断原子是否在环上"""
+    """Determine if atom is on a ring"""
     atom_idx = atom.GetIdx()
-    # 获取分子的环信息
+    # Get ring information of the molecule
     ring_info = mol.GetRingInfo()
     
-    # 遍历所有环，检查原子是否属于某个环
+    # Traverse all rings and check if atom belongs to a ring
     for ring in ring_info.AtomRings():
         if atom_idx in ring:
             return True
@@ -445,38 +445,38 @@ def is_atom_in_ring(atom, mol):
 
 
 def get_angle(mol):
-    """计算分子中符合条件的原子的键角分布"""
+    """Calculate bond angle distribution of qualifying atoms in molecule"""
     angle_dict = {}
     
-    # 获取三维坐标
+    # Get 3D coordinates
     conf = mol.GetConformer()
     
     for atom in mol.GetAtoms():
-        # 排除环上的原子
+        # Exclude atoms on rings
         if is_atom_in_ring(atom, mol):
             continue
         
-        # 获取所有邻居原子
+        # Get all neighbor atoms
         neighbors = atom.GetNeighbors()
         
-        # 排除双键连接的氧原子
+        # Exclude oxygen atoms connected by double bonds
         valid_neighbors = []
         for neighbor in neighbors:
             if neighbor.GetAtomicNum() == 8 and any([bond.GetBondType() == Chem.rdchem.BondType.DOUBLE for bond in neighbor.GetBonds()]):
-                continue  # 排除双键连接的氧原子
+                continue  # Exclude oxygen atoms connected by double bonds
             valid_neighbors.append(neighbor)
         
-        # 只考虑剩下有2个重原子邻居的原子
+        # Only consider atoms with 2 heavy atom neighbors
         heavy_neighbors = [n for n in valid_neighbors if n.GetAtomicNum() > 1]
         if len(heavy_neighbors) != 2:
             continue
         
         
-        # 获取原子索引
+        # Get atom indices
         atom_idx = atom.GetIdx()
         heavy_neighbors_idx = [n.GetIdx() for n in heavy_neighbors]
         
-        # 计算键角（只需计算一次：邻居1，中心原子，邻居2）
+        # Calculate bond angle (only need to calculate once: neighbor1, center atom, neighbor2)
         neighbor1_idx, neighbor2_idx = heavy_neighbors_idx
         angle = rdMolTransforms.GetAngleDeg(conf, neighbor1_idx, atom_idx, neighbor2_idx)
         
@@ -487,34 +487,34 @@ def get_angle(mol):
 def get_atom_token_pos_lis(t_smiles):
     lis = t_smiles.split(' ')
     atom_lis = []
-    inside_brackets = False  # Track whether we are between '[' and ']'
+    inside_brackets = False  # Track whether we're between `[` and `]`
 
     for idx, token in enumerate(lis):
-        # Check if entering '[' interior
+        # Check if entering inside `[`
         if '[' == token:
             inside_brackets = True  
         
         elif token == ']':
-            inside_brackets = False  # Encountered ']' means end
+            inside_brackets = False  # Encountering `]` means end
             atom_lis.append(idx)
 
-                # If current token is between '[' and ']', skip
+                # If current token is between `[` and `]`, skip
         if inside_brackets:
             pass  
 
         else:
             #print(token)
-            # If token is lowercase letter and previous character is uppercase letter
-            if len(token) == 1 and token == 'l' and idx > 0 and lis[idx - 1] == 'C':
-                pass  # If it's lowercase letter and previous is uppercase letter, skip
-            elif len(token) == 1 and token == 'r' and idx > 0 and lis[idx - 1] == 'B':
-                pass  # If it's lowercase letter and previous is uppercase letter, skip
-            elif len(token) == 1 and token == 'i' and idx > 0 and lis[idx - 1] == 'S':
-                pass  # If it's lowercase letter and previous is uppercase letter, skip
-            elif len(token) == 1 and token == 's' and idx > 0 and lis[idx - 1] == 'A':
-                pass  # If it's lowercase letter and previous is uppercase letter, skip
-            elif len(token) == 1 and token == 'e' and idx > 0 and lis[idx - 1] == 'S':
-                pass  # If it's lowercase letter and previous is uppercase letter, skip
+            # If token is lowercase and previous character is uppercase
+            if len(token) == 'l'and idx > 0 and lis[idx - 1] == 'C':
+                pass  # If lowercase and previous is uppercase, skip
+            elif len(token) == 'r'and idx > 0 and lis[idx - 1] == 'B':
+                pass  # If lowercase and previous is uppercase, skip
+            elif len(token) == 'i'and idx > 0 and lis[idx - 1] == 'S':
+                pass  # If lowercase and previous is uppercase, skip
+            elif len(token) == 's'and idx > 0 and lis[idx - 1] == 'A':
+                pass  # If lowercase and previous is uppercase, skip
+            elif len(token) == 'e'and idx > 0 and lis[idx - 1] == 'S':
+                pass  # If lowercase and previous is uppercase, skip
             # If token is a letter
             elif token.isalpha():
                 atom_lis.append(idx)  # If token is a letter, add to atom_lis
@@ -525,7 +525,7 @@ def get_atom_token_pos_lis(t_smiles):
 @timeout_decorator.timeout(10)
 def get_ConfSeq_pair_from_mol(ran_mol):
     ran_mol = copy.deepcopy(ran_mol)
-    #####2025_3_2加角度
+    #####2025_3_2 added Angle
     angle_dict = get_angle(ran_mol)
     #####
     
@@ -543,12 +543,12 @@ def get_ConfSeq_pair_from_mol(ran_mol):
         if key in p_chiral_dic:
             del p_chiral_dic[key]
     
-    TD_smiles,in_smiles = get_TD_smiles_in_smiles_iso(TD_smiles,in_smiles)  # 加顺反异构信息
+    TD_smiles,in_smiles = get_TD_smiles_in_smiles_iso(TD_smiles,in_smiles)  # Add cis-trans isomer information
     TD_smiles,in_smiles = add_chiral_to_TD_smiles_in_smiles(p_chiral_dic,dihedrals,TD_smiles,in_smiles)  
 
 
 
-    #####2025_3_2加角度
+    #####2025_3_2 added Angle
     atom_token_pos_lis= get_atom_token_pos_lis(TD_smiles)
     #print(TD_smiles,atom_token_pos_lis)
 
@@ -569,7 +569,7 @@ def get_ConfSeq_pair_from_mol(ran_mol):
 ##########################
 
 
-##2025_3_2加角度
+##2025_3_2 added Angle
 '''
 def get_ConfSeq_pair_from_mol(ran_mol):
     ran_mol = copy.deepcopy(ran_mol)
@@ -587,7 +587,7 @@ def get_ConfSeq_pair_from_mol(ran_mol):
         if key in p_chiral_dic:
             del p_chiral_dic[key]
     
-    TD_smiles,in_smiles = get_TD_smiles_in_smiles_iso(TD_smiles,in_smiles)  # 加顺反异构信息
+    TD_smiles,in_smiles = get_TD_smiles_in_smiles_iso(TD_smiles,in_smiles)  # Add cis-trans isomer information
     TD_smiles,in_smiles = add_chiral_to_TD_smiles_in_smiles(p_chiral_dic,dihedrals,TD_smiles,in_smiles)  
     
     return in_smiles, TD_smiles
@@ -595,30 +595,30 @@ def get_ConfSeq_pair_from_mol(ran_mol):
 
 
 def get_p_chiral_mol_3d(smiles,p_chiral_dic,is_op = True):
-    # 从SMILES字符串创建分子
-    mol = Chem.MolFromSmiles(smiles)  # 以乙醇为例
+    # Create molecule from SMILES string
+    mol = Chem.MolFromSmiles(smiles)  # Using ethanol as example
     
     o_charge_dic = {}
     o_H_dic = {}
     for atom in mol.GetAtoms():
-        if atom.GetSymbol() == 'N':  # 找到氮原子
-            hyb = atom.GetHybridization()  # 获取杂化类型
-            if hyb == Chem.rdchem.HybridizationType.SP3 and atom.GetFormalCharge() == 0:  # 检查是否为 sp3 杂化
+        if atom.GetSymbol() == 'N':  # Find nitrogen atom
+            hyb = atom.GetHybridization()  # Get hybridization type
+            if hyb == Chem.rdchem.HybridizationType.SP3 and atom.GetFormalCharge() == 0:  # Check if it's sp3 hybridization
                 o_charge_dic[atom.GetIdx()] = atom.GetFormalCharge()
                 o_H_dic[atom.GetIdx()] = atom.GetNumExplicitHs()
-                atom.SetFormalCharge(1)  # 设置电荷为 +1  
+                atom.SetFormalCharge(1)  # Set charge to +1  
                 atom.SetNumExplicitHs(1)
-                #显式氢1
+                #Explicit hydrogen 1
 
-        if atom.GetSymbol() == 'S':  # 找到氮原子
-            hyb = atom.GetHybridization()  # 获取杂化类型
+        if atom.GetSymbol() == 'S':  # Find nitrogen atom
+            hyb = atom.GetHybridization()  # Get hybridization type
             #print(hyb)
-            if hyb == Chem.rdchem.HybridizationType.SP3 and atom.GetFormalCharge() == 1:  # 检查是否为 sp3 杂化
+            if hyb == Chem.rdchem.HybridizationType.SP3 and atom.GetFormalCharge() == 1:  # Check if it's sp3 hybridization
                 o_charge_dic[atom.GetIdx()] = atom.GetFormalCharge()
                 o_H_dic[atom.GetIdx()] = atom.GetNumExplicitHs()
-                atom.SetFormalCharge(0)  # 设置电荷为 +1  
+                atom.SetFormalCharge(0)  # Set charge to +1  
                 atom.SetNumExplicitHs(1)
-                #显式氢1
+                #Explicit hydrogen 1
            
     isotope_base = 1 
     for atom in mol.GetAtoms():
@@ -629,32 +629,32 @@ def get_p_chiral_mol_3d(smiles,p_chiral_dic,is_op = True):
     for key,value in p_chiral_dic.items():
         mol.GetAtomWithIdx(key).SetChiralTag(value)
 
-    #添加氢原子
+    #Add hydrogen atoms
     mol_with_h = Chem.AddHs(mol)
-    # 生成3D构象
+    # Generate 3D conformation
     params = AllChem.ETKDG()
     #params = AllChem.ETKDGv3()
-    #params.randomSeed = 0  # 设置随机种子
+    #params.randomSeed = 0  # Set random seed
     
-    # 生成 3D 构象
+    # Generate 3D conformation
     AllChem.EmbedMolecule(mol_with_h, params)
 
-    # 可选: 使用力场优化构象
+    # Optional: Use force field to optimize conformation
     if is_op == True:
         AllChem.UFFOptimizeMolecule(mol_with_h)
     else:
         pass
-    # 移除氢原子
+    # Remove hydrogen atoms
     mol = Chem.RemoveHs(mol_with_h)
     #AllChem.EmbedMolecule(mol, AllChem.ETKDG())
     
     for k,v in o_charge_dic.items():
         atom = mol.GetAtomWithIdx(k)
-        atom.SetFormalCharge(v)  # 设置新的电荷
+        atom.SetFormalCharge(v)  # Set new charge
 
     for k,v in o_H_dic.items():
         atom = mol.GetAtomWithIdx(k)
-        atom.SetNumExplicitHs(v)  # 设置新的电荷        
+        atom.SetNumExplicitHs(v)  # Set new charge        
         
     for atom in mol.GetAtoms():
         atom.SetIsotope(0)
@@ -667,7 +667,7 @@ def complete_t_smiles(t_smiles_lis,smiles_BE_lis):
     for i in range(len(smiles_BE_lis)):
         if smiles_BE_lis[i] != t_smiles_lis[i]:
             if '>' not in t_smiles_lis[i]:
-                t_smiles_lis = t_smiles_lis[:i] + ['-'] + t_smiles_lis[i:]   # This might need to be changed, sometimes it's not necessarily a single bond
+                t_smiles_lis = t_smiles_lis[:i] + ['-'] + t_smiles_lis[i:]   #May need to change here, sometimes not necessarily single bond
     return t_smiles_lis
 
 
@@ -717,7 +717,7 @@ def reset_dihedrals(mol,atom_pair_dihedrals_dic):
 def apply_dihedrals(mol, dihedral_list):
     mol = copy.deepcopy(mol)
     conf = mol.GetConformer()
-    ssr = Chem.GetSymmSSSR(mol)  # 获取分子中的环系统
+    ssr = Chem.GetSymmSSSR(mol)  # Get ring system in molecule
     unapplied_dihedrals = []
     for dihedral in dihedral_list:
         
@@ -727,10 +727,10 @@ def apply_dihedrals(mol, dihedral_list):
             mol.GetBondBetweenAtoms(atom2, atom3) is not None and \
             mol.GetBondBetweenAtoms(atom3, atom4) is not None:
 
-            # 检查 (atom2, atom3) 键是否属于环
+            # Check if (atom2, atom3) bond belongs to ring
             in_ring = any(atom2 in ring and atom3 in ring for ring in ssr)
             if not in_ring:
-                # 如果不属于环，则设置二面角
+                # If not in ring, set dihedral angle
                 AllChem.SetDihedralRad(conf, atom1, atom2, atom3, atom4, math.radians(angle))
             else:
                 unapplied_dihedrals.append(dihedral)
@@ -770,19 +770,19 @@ def apply_dihedrals(mol, dihedral_list):
 ##################2025_3_1
 def get_fully_shared_ring_bonds(mol):
     """
-    识别分子中所有键都至少属于两个以上的环的环，并提取这些环上的键。
+    Identify rings where all bonds belong to at least two rings, and extract bonds on these rings.
 
-    参数:
-        mol (rdkit.Chem.Mol): RDKit 分子对象
+    Parameters:
+        mol (rdkit.Chem.Mol): RDKit molecule object
 
-    返回:
-        list of tuples: 这些环上的键列表，格式为 (atom1, atom2)
+    Returns:
+        list of tuples: A list of bonds on these rings, in the format (atom1, atom2)
     """
     ring_info = mol.GetRingInfo()
-    all_rings = ring_info.BondRings()  # 获取所有环的键索引
-    bond_counts = {}  # 统计每根键出现在多少个环中
+    all_rings = ring_info.BondRings()  # Get bond indices of all rings
+    bond_counts = {}  # Count how many rings each bond appears in
 
-    # 统计每个键出现在多少个环中
+    # Count how many rings each bond appears in
     for ring in all_rings:
         for bond_idx in ring:
             bond_counts[bond_idx] = bond_counts.get(bond_idx, 0) + 1
@@ -790,12 +790,12 @@ def get_fully_shared_ring_bonds(mol):
     
     fully_shared_bonds = set()
 
-    # 筛选出所有键都至少属于两个以上环的环
+    # Filter rings where all bonds belong to at least two rings
     for ring in all_rings:
-        if all(bond_counts[bond_idx] >= 2 for bond_idx in ring):  # 确保所有键都至少在两个环内
+        if all(bond_counts[bond_idx] >= 2 for bond_idx in ring):  # Ensure all bonds are in at least two rings
             fully_shared_bonds.update(ring)
 
-    # 转换为 (atom1, atom2) 格式
+    # Convert to (atom1, atom2) format
     shared_bond_list = []
     for bond_idx in fully_shared_bonds:
         bond = mol.GetBondWithIdx(bond_idx)
@@ -834,20 +834,20 @@ def get_last_ring_bonds(in_smiles):
 ####2025_3_1
 # def get_last_ring_bonds(in_smiles):
 #     """
-#     获取 RDKit 分子对象中所有非芳香环上的键，并按环分组。
+#     Get all non-aromatic ring bonds from an RDKit molecule object and group them by ring.
 
-#     参数:
-#         mol (rdkit.Chem.Mol): RDKit 分子对象
+#     Parameters:
+#         mol (rdkit.Chem.Mol): RDKit molecule object
 
-#     返回:
-#         list: 每个非芳香环上的键列表（以键索引的元组表示）
+#     Returns:
+#         list: A list of bonds on each non-aromatic ring (represented as tuples of bond indices)
 #     """
 #     mol = Chem.MolFromSmiles(in_smiles)
-#     rings = mol.GetRingInfo().AtomRings()  # 获取所有环的原子索引
+#     rings = mol.GetRingInfo().AtomRings()  # Get atom indices of all rings
 #     non_aromatic_ring_bonds = []
 
 #     for ring in rings:
-#         # 检查是否是非芳香环（如果所有键都不是芳香键）
+#         # Check if it is a non-aromatic ring (if all bonds are not aromatic bonds)
 #         bond_list = []
 #         is_aromatic = any(mol.GetBondBetweenAtoms(ring[i], ring[(i+1) % len(ring)]).GetIsAromatic() for i in range(len(ring)))
         
@@ -958,9 +958,9 @@ def del_add_chiral_from_TD_smiles(in_smiles,TD_smiles):
 def get_mol_from_ConfSeq_pair(in_smiles,TD_smiles,is_op = True):
 
 
-    ######2025_3_2####角度
+    ######2025_3_2####Angle
     pattern = r'<-?\d+>\s*\|'
-    # 查找所有匹配项
+    # Find all matches
     matches = re.findall(pattern, TD_smiles)
     
     for match in matches:
@@ -983,8 +983,8 @@ def get_mol_from_ConfSeq_pair(in_smiles,TD_smiles,is_op = True):
     
     TD_smiles_lis = TD_smiles.split(' ')
     
-    mol = get_p_chiral_mol_3d(in_smiles.replace(' ',''),p_chiral_dic,is_op = is_op)  # 这里之前有bug,是is_op = True，2024_12_15
-    ######2025_3_2####角度
+    mol = get_p_chiral_mol_3d(in_smiles.replace(' ',''),p_chiral_dic,is_op = is_op)  # There was a bug here, was is_op = True, 2024_12_15
+    ######2025_3_2####Angle
     angle_dict = get_angle(mol)
     updata_angle_dict = {}
     count = 0
@@ -1031,36 +1031,36 @@ def get_mol_from_ConfSeq_pair(in_smiles,TD_smiles,is_op = True):
 
 def set_angle(mol, angle_dict):
     """
-    根据给定的键角字典设置分子中原子的键角
-    :param mol: RDKit 分子对象，必须有 3D 坐标
-    :param angle_dict: 字典，键为中心原子索引，值为角度（度数）
+    Sets the bond angles of atoms in a molecule according to a given dictionary.
+    :param mol: RDKit molecule object, must have 3D coordinates
+    :param angle_dict: Dictionary with central atom index as key and Angle (in degrees) as value
     """
     conf = mol.GetConformer()
     
     for atom_idx, angle in angle_dict.items():
         atom = mol.GetAtomWithIdx(atom_idx)
         
-        # 获取所有邻居原子
+        # Get all neighbor atoms
         neighbors = atom.GetNeighbors()
         
-        # 排除双键连接的氧原子
+        # Exclude oxygen atoms connected by double bonds
         valid_neighbors = []
         for neighbor in neighbors:
             if neighbor.GetAtomicNum() == 8 and any(
                 bond.GetBondType() == Chem.rdchem.BondType.DOUBLE for bond in neighbor.GetBonds()
             ):
-                continue  # 排除双键连接的氧原子
+                continue  # Exclude oxygen atoms connected by double bonds
             valid_neighbors.append(neighbor)
         
-        # 只考虑剩下有2个重原子邻居的原子
+        # Only consider atoms with 2 heavy atom neighbors
         heavy_neighbors = [n for n in valid_neighbors if n.GetAtomicNum() > 1]
         if len(heavy_neighbors) != 2:
-            continue  # 跳过不符合条件的原子
+            continue  # Skip atoms that don't meet criteria
         
-        # 获取邻居原子的索引
+        # Get neighbor atom indices
         neighbor1_idx, neighbor2_idx = [n.GetIdx() for n in heavy_neighbors]
         
-        # 设置键角
+        # Set bond angle
         rdMolTransforms.SetAngleDeg(conf, neighbor1_idx, atom_idx, neighbor2_idx, angle)
     
     return mol
@@ -1179,7 +1179,7 @@ def run_aug_mol_get_ConfSeq_pair_2(data):
     return txt
 
 def replace_angle_brackets_with_line(input_string):
-    # 使用正则表达式匹配尖括号里的内容并替换为下划线
+    # Use regex to match content in angle brackets and replace with underscores
     result_string = re.sub(r'<-?\d+>\s*\|', '^ |', input_string)
     result_string = re.sub(r'<.*?>', '-', result_string)
     result_string = result_string.replace('{', '!').replace('}', '!')

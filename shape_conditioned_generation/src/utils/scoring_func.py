@@ -119,22 +119,22 @@ def flatten_similarity_data(
     score_list: Optional[List[List[float]]] = None
 ) -> pd.DataFrame:
     """
-    将成对的相似度数组扁平化为 DataFrame。
+    Flattens pairwise similarity arrays into a DataFrame.
 
     Parameters
     ----------
     shape_list : List[np.ndarray]
-        每组中 shape 相似度数组列表。
+        List of shape similarity arrays for each group.
     graph_list : List[np.ndarray]
-        每组中 graph 相似度数组列表。
+        List of graph similarity arrays for each group.
     score_list : Optional[List[List[float]]]
-        每组中分数列表，若为 None 则不包含 'score' 列。
+        List of scores for each group. If None, the 'score' column is not included.
 
     Returns
     -------
     pd.DataFrame
-        包含列 ['group_id','mol_id','shape_similarity','graph_similarity']
-        以及可选的 'score' 列。
+        Contains columns ['group_id', 'mol_id', 'shape_similarity', 'graph_similarity']
+        and an optional 'score' column.
     """
     records = []
     for group_id, (s_arr, g_arr) in enumerate(zip(shape_list, graph_list)):
@@ -172,34 +172,34 @@ def compute_similarity_dataframe(
     has_scores: bool = True
 ) -> pd.DataFrame:
     """
-    针对参考分子和生成分子批次，计算 shape 与 Tanimoto 相似度，
-    并以 DataFrame 形式返回（可选保存为 CSV）。
+    Computes shape and Tanimoto similarity for batches of reference and generated molecules,
+    and returns them as a DataFrame (optionally saved to CSV).
 
     Parameters
     ----------
     ref_mols : List[Mol]
-        参考分子列表。
+        List of reference molecules.
     gen_data : List[List[Mol]]
-        生成分子按批次组织的列表。
+        List of generated molecules organized in batches.
     method : str, default 'shaep'
-        相似度计算方法，可选 'shaep' 或 'rdkit'。
+        Similarity calculation method, options are 'shaep' or 'rdkit'.
     save_path : Optional[str]
-        若提供，则保存结果为 CSV 文件。
+        If provided, saves the results to a CSV file.
     has_scores : bool, default True
-        是否从分子属性中提取 'score' 字段。
+        Whether to extract the 'score' field from molecule properties.
 
     Returns
     -------
     pd.DataFrame
-        包含相似度及可选分数的 DataFrame。
+        A DataFrame containing similarity and optional scores.
     """
     shape_list, graph_list = [], []
-    for idx, batch in enumerate(tqdm(gen_data, desc='计算相似度')):
+    for idx, batch in enumerate(tqdm(gen_data, desc='Calculating similarity')):
         try:
             s = get_shape_similarity_matrix_shaep([ref_mols[idx]], batch).flatten()
             g = get_tanimoto_similarity_matrix([ref_mols[idx]], batch).flatten()
         except Exception as e:
-            logging.warning(f'第 {idx} 组计算失败，使用空数组替代：{e}')
+            logging.warning(f'Group  {idx}  calculation failed, using empty array instead:{e}')
             s, g = np.array([]), np.array([])
 
         shape_list.append(s)
@@ -225,20 +225,21 @@ def compute_similarity_dataframe(
 
 def compute_similarity_statistics(df: pd.DataFrame) -> pd.DataFrame:
     """
-    按 group_id 分组后，计算 shape_similarity 和 graph_similarity 的组内均值，
-    并对这些组均值分别计算整体均值和标准差，最终以“均值±标准差”字符串形式返回。
+    After grouping by group_id, calculate the intra-group mean of shape_similarity and graph_similarity,
+    and then calculate the overall mean and standard deviation for these group means, 
+    finally returning the result as a "mean±std" string.
 
-    参数：
-    - df: DataFrame，必须包含以下三列
-        • group_id          ：分组标识
-        • shape_similarity  ：形状相似度
-        • graph_similarity  ：图谱（Tanimoto）相似度
+    Parameters:
+    - df: DataFrame, must contain the following three columns
+        • group_id          : Group identifier
+        • shape_similarity  : Shape similarity
+        • graph_similarity  : Graph (Tanimoto) similarity
 
-    返回：
-    - summary: DataFrame，索引为 ['shape', 'graph']，
-        列为 ['mean±std']，数值均为格式化后的字符串形式。
+    Returns:
+    - summary: DataFrame, with index ['shape', 'graph'],
+        and column ['mean±std'], where the values are formatted strings.
     """
-    # 1. 按组聚合，得到每组的均值
+    # 1. Aggregate by group to get the mean of each group
     df_group = (
         df
         .groupby('group_id', as_index=False)
@@ -248,19 +249,17 @@ def compute_similarity_statistics(df: pd.DataFrame) -> pd.DataFrame:
         )
     )
 
-    # 2. 分别计算“组均值”的整体均值 & 标准差
+    # 2. Calculate the overall mean & standard deviation of the "group means"
     shape_mean_of_means = df_group['shape_mean'].mean()
-    shape_std_of_means  = df_group['shape_mean'].std(ddof=0)
     graph_mean_of_means = df_group['graph_mean'].mean()
-    graph_std_of_means  = df_group['graph_mean'].std(ddof=0)
 
-    # 3. 格式化为 “均值±标准差” 的字符串，保留三位小数
+    # 3. Format as a "mean±std" string, keeping three decimal places
     summary = pd.DataFrame({
         'Avg_shape': [
-            f'{shape_mean_of_means:.3f} ± {shape_std_of_means:.3f}'
+            shape_mean_of_means
         ],
         'Avg_graph': [
-            f'{graph_mean_of_means:.3f} ± {graph_std_of_means:.3f}'
+            graph_mean_of_means
         ]
     })
 
