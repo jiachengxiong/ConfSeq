@@ -68,7 +68,7 @@ To train the shape-conditioned generation model, execute:
 bash scripts/train_surfbart.sh
 ```
 
-A pretrained model checkpoint can also be downloaded from [this link](https://1drv.ms/f/c/940c94b59e54c472/EjUXe9kpMTRJj4LQSMT-coUBxK9_TvuVYHpmzajT-ewbfQ?e=olMAH8).
+Alternatively, you may download a pre-trained model checkpoint from [this link](https://1drv.ms/f/c/940c94b59e54c472/EjUXe9kpMTRJj4LQSMT-coUBxK9_TvuVYHpmzajT-ewbfQ?e=olMAH8) and place it in the `checkpoints` directory.
 
 ---
 

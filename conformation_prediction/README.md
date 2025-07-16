@@ -48,7 +48,7 @@ To train the conformation prediction model, run:
 accelerate launch --multi_gpu --mixed_precision fp16 --num_processes 4 train_model.py
 ```
 
-Alternatively, you may download a pre-trained model checkpoint from [this link](https://1drv.ms/f/c/940c94b59e54c472/EmIGxYLJXptOkSC_ZrG2LJUBMhlxR--jsK6Y4bk_kd6tXQ?e=e3V1n5).
+Alternatively, you may download a pre-trained model checkpoint from [this link](https://1drv.ms/f/c/940c94b59e54c472/EmIGxYLJXptOkSC_ZrG2LJUBMhlxR--jsK6Y4bk_kd6tXQ?e=e3V1n5) and place it in the `checkpoints` directory.
 
 ---
 ## 🤖 Inference

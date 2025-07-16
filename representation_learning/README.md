@@ -44,7 +44,7 @@ To train the representation learning model, run:
 accelerate launch --multi_gpu --mixed_precision fp16 --num_processes 4 train.py
 ```
 
-Alternatively, you may download a pre-trained model checkpoint from [this link](https://1drv.ms/f/c/940c94b59e54c472/Esl0IQNq44BIneU_K80LCmMBA02BJcstSDygUk8vJfQQjw?e=ezX4tc).
+Alternatively, you may download a pre-trained model checkpoint from [this link](https://1drv.ms/f/c/940c94b59e54c472/Esl0IQNq44BIneU_K80LCmMBA02BJcstSDygUk8vJfQQjw?e=ezX4tc) and place it in the `checkpoints` directory.
 
 ---
 ## 📊 Evaluation
