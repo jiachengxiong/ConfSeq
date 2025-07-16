@@ -5,7 +5,7 @@ from transformers import BartForCausalLM, GenerationConfig, BartConfig
 
 class MyBartForCausalLM(BartForCausalLM):
     def __init__(self, config, tokenizer):
-        # 初始化并传入自定义BartConfig
+        # Initialize and pass custom BartConfig
         bart_config = BartConfig(**config.bart)
         bart_config.vocab_size = tokenizer.vocab_size
         bart_config.pad_token_id = tokenizer.pad_token_id
@@ -14,7 +14,7 @@ class MyBartForCausalLM(BartForCausalLM):
 
         super().__init__(bart_config)
 
-        # 记录外部config/分词器，构造生成配置
+        # Record external config/tokenizer, construct generation configuration
         self.custom_config = config
         self.tokenizer = tokenizer
         if 'generation_config' in config:
@@ -26,7 +26,7 @@ class MyBartForCausalLM(BartForCausalLM):
                  input_ids=None, 
                  attention_mask=None,
                  **generate_kwargs):
-        # 非训练时用bos token重写输入
+        # During non-training, rewrite input with bos token
         if not self.training:
             device = self.device 
             bos_token_id = self.config.bos_token_id
@@ -37,7 +37,7 @@ class MyBartForCausalLM(BartForCausalLM):
             )
             attention_mask = None
 
-        # 使用父类BartForCausalLM的generate，并传入自定义的generation_config
+        # Use parent class BartForCausalLM's generate and pass custom generation_config
         return super().generate(
             input_ids=input_ids,
             attention_mask=attention_mask,

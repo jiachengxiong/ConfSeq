@@ -11,7 +11,7 @@ def mol2TDsmiles(mols_list, num_workers=10, aug_mode=0, aug_times=1, do_random=F
         if mol is not None:
             datas.append((mol, Chem.MolToSmiles(mol)))
 
-    # 根据 aug_mode 选择不同的处理函数，并通过 tqdm 的 disable 参数控制是否显示进度条
+    # Choose different processing functions based on aug_mode, and control whether to display progress bar through tqdm's disable parameter
     if aug_mode == 0:
         results_t0 = process_map(
             run_aug_mol_get_ConfSeq_pair_0,
@@ -36,14 +36,14 @@ def mol2TDsmiles(mols_list, num_workers=10, aug_mode=0, aug_times=1, do_random=F
     else:
         raise ValueError(f'Invalid aug_mode: {aug_mode}')
 
-    random.seed(42)  # 设置随机种子以确保结果可复现
+    random.seed(42)  # Set random seed to ensure reproducible results
     if do_random:
         for i in range(len(results_t0)):
             if random.random() >= 0.5:
                 results_t0[i] = random_adjust_numbers(results_t0[i])
             results_t0[i] = results_t0[i].replace('<180>', '<-180>')
 
-    # 处理结果
+    # Process results
     td_smiles_list = []
     for i in range(len(results_t0)):
         parts = results_t0[i].split('\t')

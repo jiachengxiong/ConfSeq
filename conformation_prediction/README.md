@@ -8,7 +8,7 @@ This directory contains the code and configuration files for the 3D molecular co
 ---
 ## 📦 Data Preparation
 
-We use the **GEOM-Drugs** dataset to train and evaluate our model.  The original data were downloaded from [this repository](https://github.com/OdinZhang/SDEGen).  Alternatively, you can download the raw data from  [this link](mylink).
+We use the **GEOM-Drugs** dataset to train and evaluate our model.  The original data were downloaded from [this repository](https://github.com/OdinZhang/SDEGen).  Alternatively, you can download the raw data from  [this link](https://1drv.ms/f/c/940c94b59e54c472/EhjVMQa_TCpBnieB5MYRNJMBihav3B0wJ29_qtaBj1IXeQ?e=9D2p03).
 
 After downloading, place the files inside the `raw_data` folder. The expected folder structure is as follows:
 
@@ -26,7 +26,7 @@ To convert the raw data into ConfSeq-formatted text files, run:
 python process_raw_data.py
 ```
 
-The generated files will be saved in the `processed_data` folder.  Alternatively, you may download the processed results from [this link](mylink) and place them in the `processed_data` folder. The expected folder structure is as follows:
+The generated files will be saved in the `processed_data` folder.  Alternatively, you may download the processed results from [this link](https://1drv.ms/f/c/940c94b59e54c472/EjcPXApiXsxHtWg6ovV8IZwBY2WWsa09wmpDJ8d4CmkJIw?e=8BXUqH) and place them in the `processed_data` folder. The expected folder structure is as follows:
 ```
 .
 └── processed_data/
@@ -48,7 +48,7 @@ To train the conformation prediction model, run:
 accelerate launch --multi_gpu --mixed_precision fp16 --num_processes 4 train_model.py
 ```
 
-Alternatively, you may download a pre-trained model checkpoint from [this link](mylink) and place it in the `checkpoints` directory.
+Alternatively, you may download a pre-trained model checkpoint from [this link](https://1drv.ms/f/c/940c94b59e54c472/EmIGxYLJXptOkSC_ZrG2LJUBMhlxR--jsK6Y4bk_kd6tXQ?e=e3V1n5).
 
 ---
 ## 🤖 Inference
@@ -59,7 +59,7 @@ To perform inference using different sampling temperatures, run:
 python infer_and_evaluate_temperature_series.py
 ```
 
-The generated files will be saved in the `prediction_data` folder. Alternatively, you may download the inference results from [this link](mylink) and place them in the `prediction_data` folder. 
+The generated files will be saved in the `prediction_data` folder. Alternatively, you may download the inference results from [this link](https://1drv.ms/f/c/940c94b59e54c472/Eh-lN8-bxjJDhRHiFoGL9AMB4YUaAGKHBcw2IE_Bgz8dxw?e=yTz6OUk) and place them in the `prediction_data` folder. 
 
 ---
 

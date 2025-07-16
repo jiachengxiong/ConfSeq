@@ -93,15 +93,15 @@ def safe_calculate(func, *args, **kwargs):
 
 def get_druglike_properties(mol):
     """
-    计算单个分子的药物相似性指标，并返回一个包含 SMILES 和各项指标的字典。
+    Calculate drug-likeness metrics for a single molecule and return a dictionary containing SMILES and various metrics.
     """
-    # 1. 先把 mol 转成 SMILES（保留立体化学信息）
+    # 1. First convert mol to SMILES (preserving stereochemical information)
     try:
         smiles = Chem.MolToSmiles(mol, isomericSmiles=True)
     except Exception:
         smiles = None
 
-    # 2. 各项计算函数映射
+    # 2. Various calculation function mappings
     calculations = {
         'QED':      lambda m: qed(m),
         'SAS':      lambda m: sascorer.calculateScore(m),
@@ -110,7 +110,7 @@ def get_druglike_properties(mol):
         'TPSA':     lambda m: Descriptors.TPSA(m),
     }
 
-    # 3. 逐项安全计算
+    # 3. Safe calculation for each item
     results = {'SMILES': smiles}
     for name, func in calculations.items():
         results[name] = safe_calculate(func, mol)
@@ -120,18 +120,18 @@ def get_druglike_properties(mol):
 
 def compute_druglike_properties(mols, save_path=None, max_workers=10, disable_tqdm=False):
     """
-    并行计算一批分子的药物相似性指标，返回包含 SMILES 和所有指标的 DataFrame。
+    Calculate drug-likeness metrics for a batch of molecules in parallel, returning a DataFrame containing SMILES and all metrics.
     
-    参数:
-      - mols: 可迭代的 RDKit Mol 对象列表
-      - save_path: 若不为 None，则将结果保存为 CSV
-      - max_workers: 并行进程数
-      - disable_tqdm: 是否屏蔽进度条
+    Parameters:
+      - mols: Iterable list of RDKit Mol objects
+      - save_path: If not None, save results as CSV
+      - max_workers: Number of parallel processes
+      - disable_tqdm: Whether to disable progress bar
     
-    返回:
-      - pandas.DataFrame，每行对应一个分子，列包括 SMILES、QED、SAS、logP、Lipinski、TPSA
+    Returns:
+      - pandas.DataFrame, each row corresponds to a molecule, columns include SMILES, QED, SAS, logP, Lipinski, TPSA
     """
-    # 并行映射计算
+    # Parallel mapping calculation
     props_list = process_map(
         get_druglike_properties,
         mols,
@@ -139,10 +139,10 @@ def compute_druglike_properties(mols, save_path=None, max_workers=10, disable_tq
         disable=disable_tqdm
     )
 
-    # 构造 DataFrame，第一列就是 SMILES
+    # Construct DataFrame, first column is SMILES
     df = pd.DataFrame(props_list, columns=['SMILES', 'QED', 'SAS', 'logP', 'Lipinski', 'TPSA'])
 
-    # 可选地保存
+    # Optionally save
     if save_path is not None:
         df.to_csv(save_path, index=False)
 

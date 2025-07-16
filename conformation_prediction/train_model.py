@@ -31,7 +31,7 @@ print(pad_idx)
 from transformers import BartForConditionalGeneration, BartConfig
 import torch
 from torch import nn
-from transformers.modeling_outputs import BaseModelOutput  # 导入正确的输出类
+from transformers.modeling_outputs import BaseModelOutput  # Import the correct output class
 
 config = BartConfig()
 
@@ -52,7 +52,6 @@ config.classifier_dropout = 0.3
 config.num_hidden_layers = 6
 config.static_position_embeddings = True
 
-#####在23号的基础上加了这些
 config.max_position_embeddings = 512
 config.activation_function = 'relu'
 ####
@@ -89,7 +88,7 @@ def random_adjust_numbers(text):
 
 
 
-# 自定义数据集
+# Custom dataset
 class Dataset(Dataset):
     def __init__(self, data, vocab,is_random):
         self.data = data
@@ -105,7 +104,7 @@ class Dataset(Dataset):
         scr = [self.vocab_dict['<sos>']] + [self.vocab_dict.get(char, self.vocab_dict['<unk>']) for char in scr]
 
         tgt = self.data[idx][1]
-        if self.is_random:###################### 设置全
+        if self.is_random:
             tgt = random_adjust_numbers(tgt)
         
         tgt = tgt.split(' ')      
@@ -161,15 +160,15 @@ from torch.nn.utils.rnn import pad_sequence
 import torch.nn.functional as F
 
 def collate_fn(batch, pad_idx=pad_idx, max_len=256):
-    # 获取源序列和目标序列
+    # Get source and target sequences
     scr_seqs = [torch.tensor(item['scr_seq'], dtype=torch.long) for item in batch]
     tgt_seqs = [torch.tensor(item['tgt_seq'], dtype=torch.long) for item in batch]
 
-    # 使用 pad_sequence 进行批量填充
+    # Use pad_sequence for batch padding
     scr_seq_padded = pad_sequence(scr_seqs, batch_first=True, padding_value=pad_idx)
     tgt_seq_padded = pad_sequence(tgt_seqs, batch_first=True, padding_value=pad_idx)
 
-    # 裁剪到最大长度
+    # Truncate to maximum length
     scr_seq_padded = scr_seq_padded[:, :max_len]
     tgt_seq_padded = tgt_seq_padded[:, :max_len]
 
@@ -184,7 +183,7 @@ val_dataloader = DataLoader(val_dataset, batch_size=120, shuffle=True,num_worker
 
 #device = torch.device('cuda')
 device = accelerator.device
-model = BartForConditionalGeneration(config = config).to(device)  # 移动模型到GPU
+model = BartForConditionalGeneration(config = config).to(device)  # Move model to GPU
 #optimizer = optim.Adam(model.parameters(), lr=1e-4,betas=(0.9, 0.998))
 
 import torch
@@ -275,15 +274,15 @@ for epoch in range(1,4):
         if total_steps % 200 == 0:
 
             #predicted_ids = torch.argmax(logits, dim=-1)
-            # 计算预测与实际标签是否相同
-            #correct_predictions = (predicted_ids == labels).float()  # 比较预测与标签是否相同
-            #accuracy = correct_predictions.sum() / correct_predictions.numel()  # 计算准确率
+            # Calculate whether predictions match actual labels
+            #correct_predictions = (predicted_ids == labels).float()  # Compare predictions with labels
+            #accuracy = correct_predictions.sum() / correct_predictions.numel()  # Calculate accuracy
     
             predicted_ids = torch.argmax(logits, dim=-1)
-            # 生成 attention_mask，忽略 padding 的位置
+            # Generate attention_mask, ignoring padding positions
             attention_mask = (labels != pad_idx).long()
-            # 计算正确预测的 token（mask为1的位置计算）
-            correct = (predicted_ids == labels) * attention_mask  # 只有非pad部分才会计算正确与否
+            # Calculate correct predictions for tokens (calculate only where mask=1)
+            correct = (predicted_ids == labels) * attention_mask  # Only non-pad parts are considered for correctness
     
             accuracy = correct.sum().item() / attention_mask.sum().item()
 
@@ -299,7 +298,7 @@ for epoch in range(1,4):
             with torch.no_grad():
                 model.eval()  
                 all_loss = 0
-                correct_tokens = 0  # 统计正确预测的 token 数量
+                correct_tokens = 0  # Count correct predicted tokens
                 total_tokens = 0    
                 
                 for batch in val_dataloader:
@@ -319,12 +318,12 @@ for epoch in range(1,4):
                     all_loss += loss.item()
         
                     predicted_ids = torch.argmax(logits, dim=-1)
-                    # 生成 attention_mask，忽略 padding 的位置
+                    # Generate attention_mask, ignoring padding positions
                     attention_mask = (labels != pad_idx).long()
-                    # 计算正确预测的 token（mask为1的位置计算）
-                    correct = (predicted_ids == labels) * attention_mask  # 只有非pad部分才会计算正确与否
-                    correct_tokens += correct.sum().item()  # 累加正确的 token 数
-                    total_tokens += attention_mask.sum().item()  # 累加有效的 token 数
+                    # Calculate correct predictions for tokens (calculate only where mask=1)
+                    correct = (predicted_ids == labels) * attention_mask  # Only non-pad parts are considered for correctness
+                    correct_tokens += correct.sum().item()  # Accumulate correct token count
+                    total_tokens += attention_mask.sum().item()  # Accumulate valid token count
                     
                 model.train()         
         

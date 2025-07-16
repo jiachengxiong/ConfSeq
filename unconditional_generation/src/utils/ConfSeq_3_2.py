@@ -487,37 +487,37 @@ def get_angle(mol):
 def get_atom_token_pos_lis(t_smiles):
     lis = t_smiles.split(' ')
     atom_lis = []
-    inside_brackets = False  # 追踪是否处于 `[` 和 `]` 之间
+    inside_brackets = False  # Track whether we are between '[' and ']'
 
     for idx, token in enumerate(lis):
-        # 判断是否进入 `[` 内部
+        # Check if entering '[' interior
         if '[' == token:
             inside_brackets = True  
         
         elif token == ']':
-            inside_brackets = False  # 遇到 `]` 说明结束
+            inside_brackets = False  # Encountered ']' means end
             atom_lis.append(idx)
 
-                # 如果当前 token 处于 `[` 和 `]` 之间，跳过
+                # If current token is between '[' and ']', skip
         if inside_brackets:
             pass  
 
         else:
             #print(token)
-            # 如果 token 是小写字母且前一个字符是大写字母
-            if len(token) == 'l'and idx > 0 and lis[idx - 1] == 'C':
-                pass  # 如果是小写字母且前面是大写字母，跳过
-            elif len(token) == 'r'and idx > 0 and lis[idx - 1] == 'B':
-                pass  # 如果是小写字母且前面是大写字母，跳过
-            elif len(token) == 'i'and idx > 0 and lis[idx - 1] == 'S':
-                pass  # 如果是小写字母且前面是大写字母，跳过
-            elif len(token) == 's'and idx > 0 and lis[idx - 1] == 'A':
-                pass  # 如果是小写字母且前面是大写字母，跳过
-            elif len(token) == 'e'and idx > 0 and lis[idx - 1] == 'S':
-                pass  # 如果是小写字母且前面是大写字母，跳过
-            # 如果 token 是字母
+            # If token is lowercase letter and previous character is uppercase letter
+            if len(token) == 1 and token == 'l' and idx > 0 and lis[idx - 1] == 'C':
+                pass  # If it's lowercase letter and previous is uppercase letter, skip
+            elif len(token) == 1 and token == 'r' and idx > 0 and lis[idx - 1] == 'B':
+                pass  # If it's lowercase letter and previous is uppercase letter, skip
+            elif len(token) == 1 and token == 'i' and idx > 0 and lis[idx - 1] == 'S':
+                pass  # If it's lowercase letter and previous is uppercase letter, skip
+            elif len(token) == 1 and token == 's' and idx > 0 and lis[idx - 1] == 'A':
+                pass  # If it's lowercase letter and previous is uppercase letter, skip
+            elif len(token) == 1 and token == 'e' and idx > 0 and lis[idx - 1] == 'S':
+                pass  # If it's lowercase letter and previous is uppercase letter, skip
+            # If token is a letter
             elif token.isalpha():
-                atom_lis.append(idx)  # 如果 token 是字母，加入 atom_lis
+                atom_lis.append(idx)  # If token is a letter, add to atom_lis
 
     return atom_lis
 
@@ -667,7 +667,7 @@ def complete_t_smiles(t_smiles_lis,smiles_BE_lis):
     for i in range(len(smiles_BE_lis)):
         if smiles_BE_lis[i] != t_smiles_lis[i]:
             if '>' not in t_smiles_lis[i]:
-                t_smiles_lis = t_smiles_lis[:i] + ['-'] + t_smiles_lis[i:]   #这里可能要该，有时候，不一定是单键
+                t_smiles_lis = t_smiles_lis[:i] + ['-'] + t_smiles_lis[i:]   # This might need to be changed, sometimes it's not necessarily a single bond
     return t_smiles_lis
 
 

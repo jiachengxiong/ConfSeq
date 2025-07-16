@@ -30,13 +30,13 @@ class GroupProbPreservingTempProcessor(LogitsProcessor):
         self.min_prob = min_prob
 
     def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
-        # 1) 先把原始 logits 转为概率分布
+        # 1) First convert original logits to probability distribution
         probs = torch.softmax(scores, dim=-1)  # [batch_size, vocab_size]
         new_probs = torch.zeros_like(probs)
 
         batch_size, vocab_size = probs.shape
 
-        # 针对每个分组，先计算该组在原分布下的概率和，再做温度变换
+        # For each group, first calculate the probability sum of that group in the original distribution, then apply temperature transformation
         for (start, end), T in zip(self.group_ranges, self.group_temps):
             if start >= vocab_size:
                 continue
@@ -45,35 +45,35 @@ class GroupProbPreservingTempProcessor(LogitsProcessor):
             group_probs = probs[:, start:local_end]  # [batch_size, group_size]
             group_sum = group_probs.sum(dim=-1, keepdim=True)  # [batch_size, 1]
 
-            # 创建一个按行判断是否 > 0 的 mask
-            # shape = [batch_size], True 代表本行 group_sum > 0
+            # Create a mask to judge whether each row is > 0
+            # shape = [batch_size], True means this row's group_sum > 0
             nonzero_mask = (group_sum.squeeze(-1) > 0)
 
-            # 如果这一组的概率和为 0，则无需做温度变换，直接是 0
+            # If this group's probability sum is 0, no need for temperature transformation, directly set to 0
             if nonzero_mask.any():
-                # 只对 nonzero_mask==True 的行做操作
+                # Only operate on rows where nonzero_mask==True
                 group_probs_nonzero = group_probs[nonzero_mask]             # [N, group_size]
                 group_sum_nonzero   = group_sum[nonzero_mask].squeeze(-1)   # [N]
 
-                # 1) 先组内归一化: p_i / sum
+                # 1) First normalize within group: p_i / sum
                 #    group_probs_normalized = [N, group_size]
                 group_probs_normalized = group_probs_nonzero / group_sum_nonzero.unsqueeze(-1)
 
-                # 2) 在概率域上做温度: (p^(1/T)) / ∑(p^(1/T))
+                # 2) Apply temperature in probability domain: (p^(1/T)) / ∑(p^(1/T))
                 group_probs_normalized = group_probs_normalized.clamp_min(self.min_prob)
                 p_temp = group_probs_normalized.pow(1.0 / T)  # [N, group_size]
                 denom = p_temp.sum(dim=-1, keepdim=True).clamp_min(self.min_prob)
-                p_temp = p_temp / denom  # 再次归一化
+                p_temp = p_temp / denom  # Normalize again
 
-                # 3) 乘回组内原概率和，保持组间总和不变
+                # 3) Multiply back by original probability sum within group, keeping total sum between groups unchanged
                 final_group_probs = p_temp * group_sum_nonzero.unsqueeze(-1)
 
-                # 写回 new_probs
+                # Write back to new_probs
                 new_probs[nonzero_mask, start:local_end] = final_group_probs
 
-            # 如果这一组全是 0，就保持 new_probs[:, start:local_end] = 0
+            # If this group is all 0, keep new_probs[:, start:local_end] = 0
 
-        # 最后把 new_probs 转回 logits
+        # Finally convert new_probs back to logits
         new_probs = new_probs.clamp_min(self.min_prob)
         new_scores = torch.log(new_probs)
         return new_scores

@@ -45,20 +45,20 @@ class PointCloudCollator():
 
 class PointCloudDataset(Dataset):
     """
-    Minimal-IO Dataset – 直接从 *已处理好的* point-cloud LMDB 读取。
+    Minimal-IO Dataset – directly read from *pre-processed* point-cloud LMDB.
 
     Parameters
     ----------
     lmdb_path : str
-        LMDB 数据库目录；必须已包含所有所需字段。
+        LMDB database directory; must contain all required fields.
     tokenizer : transformers.PreTrainedTokenizerBase, optional
-        用于编码 TD_SMILES / SMILES。
+        Used to encode TD_SMILES / SMILES.
     use_smiles : bool, default False
-        若 True，尝试把 rdmol 转为普通 SMILES；否则直接用存储的 TD_SMILES。
+        If True, try to convert rdmol to plain SMILES; otherwise use stored TD_SMILES directly.
     max_length : int, default 512
-        tokenizer 的最大长度。
+        Maximum length for tokenizer.
     cache_keys : bool, default True
-        是否将全部键缓存到 `keys_cache.pkl` 加速再次启动。
+        Whether to cache all keys to `keys_cache.pkl` for faster subsequent startup.
     """
 
     def __init__(
@@ -72,18 +72,18 @@ class PointCloudDataset(Dataset):
 
         lmdb_path = config.get("data_dir")
         if not os.path.isdir(lmdb_path):
-            raise FileNotFoundError(f"LMDB 路径不存在: {lmdb_path}")
+            raise FileNotFoundError(f"LMDB path does not exist: {lmdb_path}")
 
         self.lmdb_path  = lmdb_path
         self.tokenizer  = tokenizer
         self.use_smiles = config.get("use_smiles", False)
         self.max_length = max_length
 
-        # 延迟连接（按 worker）
+        # Lazy connection (per worker)
         self.env: Optional[lmdb.Environment] = None
         self.txn = None
 
-        # ---------- 读取 / 缓存全部键 ----------
+        # ---------- Read / cache all keys ----------
         cache_file = os.path.join(lmdb_path, "keys_cache.pkl")
         if cache_keys and os.path.isfile(cache_file):
             with open(cache_file, "rb") as f:
@@ -95,12 +95,12 @@ class PointCloudDataset(Dataset):
                     pickle.dump(self.keys, f)
 
         if not self.keys:
-            raise RuntimeError(f"空数据集: {lmdb_path}")
+            raise RuntimeError(f"Empty dataset: {lmdb_path}")
 
-        self.skip_idx: List[int] = []   # 记录坏样本索引
+        self.skip_idx: List[int] = []   # Record bad sample indices
 
     # ------------------------------------------------------------------ #
-    # 内部工具
+    # Internal tools
     # ------------------------------------------------------------------ #
     def _scan_all_keys(self) -> List[bytes]:
         env = lmdb.open(self.lmdb_path, readonly=True, lock=False,
@@ -111,7 +111,7 @@ class PointCloudDataset(Dataset):
         return keys
 
     def _connect_db(self):
-        """按需（按 worker）建立连接。"""
+        """Establish connection on demand (per worker)."""
         if self.env is None:
             self.env = lmdb.open(
                 self.lmdb_path,
@@ -124,17 +124,17 @@ class PointCloudDataset(Dataset):
 
     def _make_smiles_from_mol(self, mol, mode: str) -> str:
         """
-        根据 mode 生成 canonical 或 random SMILES。
-        mode : 'std' | 'aug'  (大小写均可)
+        Generate canonical or random SMILES based on mode.
+        mode : 'std' | 'aug'  (case insensitive)
         """
         if mode.lower() == "std":
             return " ".join(Chem.MolToSmiles(mol, canonical=True))
 
-        # ---- 随机 SMILES：RDKit 2023.09+ 支持 doRandom=True ----
+        # ---- Random SMILES: RDKit 2023.09+ supports doRandom=True ----
         try:
             return " ".join(Chem.MolToSmiles(mol, canonical=False, doRandom=True))
         except TypeError:
-            # 老版本兼容：用随机根原子
+            # Compatibility with older versions: use random root atom
             rand_root = random.randrange(mol.GetNumAtoms())
             return " ".join(Chem.MolToSmiles(mol, canonical=False, rootedAtAtom=rand_root))
 
@@ -146,9 +146,9 @@ class PointCloudDataset(Dataset):
 
     def __getitem__(self, idx: int):
         if idx < 0 or idx >= len(self.keys):
-            raise IndexError(f"索引 {idx} 超出范围。")
+            raise IndexError(f"Index {idx} out of range.")
 
-        self._connect_db()                       # 第一次真正连库
+        self._connect_db()                       
 
         # 若碰见坏样本，随机替换
         if idx in self.skip_idx:

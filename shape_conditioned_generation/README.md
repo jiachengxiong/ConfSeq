@@ -14,7 +14,7 @@ This directory contains the code and configuration files for the **shape-conditi
 We adopt the **MOSES** dataset for unconditional molecular generation, following the same data split strategy as the [DiffSMol paper](https://www.nature.com/articles/s42256-025-01030-w).
 
 1. **Download the Dataset**
-   Download the dataset and place it in the `data/MOSES/` directory. You can obtain the dataset from [this link](mylink).
+   Download the dataset and place it in the `data/MOSES/` directory. You can obtain the dataset from [this link](https://1drv.ms/f/c/940c94b59e54c472/Eo60wOizE3VLqq-HSv1a2vgBhe6HdFTb7aSMtw7OToTu-w?e=lN6Ofp).
 
 2. **Preprocess the Dataset**
    Generate the molecular surface point clouds and corresponding ConfSeq representations by executing:
@@ -56,7 +56,7 @@ We adopt the **MOSES** dataset for unconditional molecular generation, following
 >     skimage = None
 > ```
 
-Upon successful execution, the processed dataset will be available under `data/`, ready for model training and evaluation. Alternatively, you can directly download the preprocessed datasets from [this link](mylink).
+Upon successful execution, the processed dataset will be available under `data/`, ready for model training and evaluation. Alternatively, you can directly download the preprocessed datasets from [this link](https://1drv.ms/f/c/940c94b59e54c472/Ek3_WenRvLVEs8WFi8jUjqQBSFNt7OchMPgiprm_wBF8iw?e=QTzWZ9).
 
 ---
 
@@ -68,7 +68,7 @@ To train the shape-conditioned generation model, execute:
 bash scripts/train_surfbart.sh
 ```
 
-A pretrained model checkpoint can also be downloaded from [this link](mylink).
+A pretrained model checkpoint can also be downloaded from [this link](https://1drv.ms/f/c/940c94b59e54c472/EjUXe9kpMTRJj4LQSMT-coUBxK9_TvuVYHpmzajT-ewbfQ?e=olMAH8).
 
 ---
 

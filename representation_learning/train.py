@@ -46,15 +46,15 @@ class CustomBartEncoder(nn.Module):
     def __init__(self, bart):
         super().__init__()
     
-        # 加载 BART 模型
+        # Load BART model
         self.bart_model = bart 
         
     def forward(self, input_ids, attention_mask=None):
-        # 获取编码器输出
+        # Get encoder output
         outputs = self.bart_model.model.encoder(input_ids=input_ids, attention_mask=attention_mask)
         return outputs.last_hidden_state
 
-# 示例使用
+# Example usage
 model = CustomBartEncoder(bart)
 
 def random_adjust_numbers(text):
@@ -80,7 +80,7 @@ import torch
 from torch import nn, optim
 from torch.utils.data import Dataset, DataLoader,DistributedSampler
 
-# 自定义数据集
+# Custom dataset
 class SimilarityDataset(Dataset):
     def __init__(self, data, vocab):
         self.data = data
@@ -112,14 +112,14 @@ class SimilarityDataset(Dataset):
 
 
 def mean_pooling(last_hidden_state, attention_mask):
-    # 对每个样本进行池化，忽略 pad 的位置
-    # 将 attention_mask 转换为 float 类型，并进行扩展
+    # Pool each sample, ignoring pad positions
+    # Convert attention_mask to float type and expand
     attention_mask = attention_mask.unsqueeze(-1).expand(last_hidden_state.size())
-    # 计算有效的特征总和和有效特征的数量
+    # Calculate sum of valid features and count of valid features
     sum_embeddings = (last_hidden_state * attention_mask).sum(dim=1)
     sum_mask = attention_mask.sum(dim=1)
-    # 计算平均池化，避免除以零
-    pooled_output = sum_embeddings / (sum_mask + 1e-6)  # 加小常数以避免除零
+    # Calculate mean pooling, avoiding division by zero
+    pooled_output = sum_embeddings / (sum_mask + 1e-6)  # Add small constant to avoid division by zero
     return pooled_output
 
 
@@ -130,16 +130,16 @@ import torch.nn.functional as F
 pad_idx = vocab.index('<pad>')
 
 def collate_fn(batch, pad_idx=pad_idx, max_len=256):
-    # 获取源序列和目标序列
+    # Get source and target sequences
     input_ids1 = [torch.tensor(item['input_ids1'], dtype=torch.long) for item in batch]
     input_ids2 = [torch.tensor(item['input_ids2'], dtype=torch.long) for item in batch]
     similarity = [torch.tensor(item['similarity'], dtype=torch.float) for item in batch]
 
-    # 使用 pad_sequence 进行批量填充
+    # Use pad_sequence for batch padding
     input_ids1_padded = pad_sequence(input_ids1, batch_first=True, padding_value=pad_idx)
     input_ids2_padded = pad_sequence(input_ids2, batch_first=True, padding_value=pad_idx)
 
-    # 裁剪到最大长度
+    # Truncate to maximum length
     input_ids1_padded = input_ids1_padded[:, :max_len]
     input_ids2_padded = input_ids2_padded[:, :max_len]
     similarity = torch.stack(similarity)
@@ -173,12 +173,12 @@ val_data = data[95630000:]
 print(len(train_data))
 print(len(val_data))
     
-# 初始化数据集和数据加载器
+# Initialize dataset and dataloader
 train_dataset = SimilarityDataset(train_data, vocab)
 train_dataloader = DataLoader(train_dataset, batch_size=120*2, shuffle=True,num_workers = 8,collate_fn=collate_fn)
 
 val_data = val_data[:30000]    
-# 初始化数据集和数据加载器
+# Initialize dataset and dataloader
 val_dataset = SimilarityDataset(val_data, vocab)
 val_dataloader = DataLoader(val_dataset, batch_size=200, shuffle=False,num_workers = 8,collate_fn=collate_fn)
 
@@ -205,29 +205,29 @@ log_file='./training_log.txt'
 os.makedirs(save_dir, exist_ok=True)
 
 model.train()
-criterion = nn.MSELoss()  # 使用均方误差损失
-total_steps = 0  # 记录总步骤数
+criterion = nn.MSELoss()  # Use mean squared error loss
+total_steps = 0  # Record total steps
 total_loss = 0
 total_rmse = 0
 total_mae = 0
 total_r2 = 0
 
-# 打开日志文件
+# Open log file
 with open(log_file, 'a+') as f:
-    f.write('Epoch,Train_Loss,Train_RMSE,Train_MAE,Train_R2,Val_Loss,Val_RMSE,Val_MAE,Val_R2\n')  # 写入标题行
+    f.write('Epoch,Train_Loss,Train_RMSE,Train_MAE,Train_R2,Val_Loss,Val_RMSE,Val_MAE,Val_R2\n')  # Write header row
 
 for epoch in range(1):
 
     for batch in train_dataloader:
         optimizer.zero_grad()
-        # 确保输入的张量在相同的设备上
+        # Ensure input tensors are on the same device
         input_ids1 = batch['input_ids1'].to(device)
         input_ids2 = batch['input_ids2'].to(device)
 
-        attention_mask1 = (input_ids1 != 458).long().to(device)  # 创建 attention mask
-        attention_mask2 = (input_ids2 != 458).long().to(device) # 创建 attention mask
+        attention_mask1 = (input_ids1 != 458).long().to(device)  # Create attention mask
+        attention_mask2 = (input_ids2 != 458).long().to(device) # Create attention mask
 
-        # 编码
+        # Encode
         output1 = model(input_ids1)
         output2 = model(input_ids2)
 
@@ -235,10 +235,10 @@ for epoch in range(1):
         pooled_output2 = mean_pooling(output2, attention_mask2)
         
         euclidean_distance = nn.functional.pairwise_distance(pooled_output1, pooled_output2)
-        # 转换为相似性
+        # Convert to similarity
         similarity_score = 1 / (1 + euclidean_distance)
         
-        # 计算损失
+        # Calculate loss
         loss = criterion(similarity_score, batch['similarity'].to(device))
         accelerator.backward(loss)
         optimizer.step()
@@ -254,9 +254,7 @@ for epoch in range(1):
         total_mae += train_mae
         total_r2 += train_r2
         total_steps += 1
-        
-
-        #每500步输出一次损失
+          # Output loss every 500 steps
         if total_steps % 500 == 0:
             avg_loss = total_loss / 500
             avg_rmse = total_rmse / 500
@@ -274,17 +272,15 @@ for epoch in range(1):
                         f'Avg Train MAE: {avg_mae:.5f}, '
                         f'Avg Train R2: {avg_r2:.5f}\n')
         
-            # 重置累积变量
+            # Reset accumulated variables
             total_loss = 0
             total_rmse = 0
             total_mae = 0
             total_r2 = 0
 
-
-
-        # 每5000步进行一次验证
+        # Perform validation every 5000 steps
         if total_steps % 5000 == 0:
-            model.eval()  # 切换到评估模式
+            model.eval()  # Switch to evaluation mode
             val_loss = 0
             val_rmse = 0
             val_mae = 0
@@ -328,9 +324,9 @@ for epoch in range(1):
                         f'Val MAE: {val_mae:.5f}, '
                         f'Val R2: {val_r2:.5f}\n')
             
-            model.train()  # 切换回训练模式
+            model.train()  # Switch back to training mode
 
-          # 增加总步骤计数
+          # Increment total step count
 
     accelerator.wait_for_everyone()
     unwrapped_model = accelerator.unwrap_model(model)

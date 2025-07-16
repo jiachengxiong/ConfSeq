@@ -1,6 +1,6 @@
 import sys
 from tqdm import tqdm
-sys.path.append('../')  # 替换为你实际的目录路径
+sys.path.append('../')  # Replace with your actual directory path
 
 from rdkit import Chem
 from rdkit.Chem import AllChem, rdMolTransforms, rdchem
@@ -26,27 +26,27 @@ from tqdm.contrib.concurrent import process_map
 def rm_invalid_chirality(mol):
     mol = copy.deepcopy(mol)
     """
-    找出分子中同时出现在三个环中的原子。
+    Find atoms that appear in exactly three rings in the molecule.
     
-    参数:
-        mol: RDKit 分子对象
-    返回:
-        List[int]: 同时出现在三个环中的原子的索引列表
+    Parameters:
+        mol: RDKit molecule object
+    Returns:
+        List[int]: List of indices of atoms that appear in exactly three rings
     """
-    # 获取分子的所有环（SSSR：最小集的简单环）
+    # Get all rings in the molecule (SSSR: Smallest Set of Smallest Rings)
     rings = rdmolops.GetSymmSSSR(mol)
 
-    # 创建一个字典，记录每个原子出现在多少个环中
+    # Create a dictionary to record how many rings each atom appears in
     atom_in_rings_count = {}
 
-    # 遍历所有环，统计每个原子出现的次数
+    # Iterate through all rings and count occurrences of each atom
     for ring in rings:
         for atom_idx in ring:
             if atom_idx not in atom_in_rings_count:
                 atom_in_rings_count[atom_idx] = 0
             atom_in_rings_count[atom_idx] += 1
 
-    # 找出那些同时出现在三个环中的原子
+    # Find atoms that appear in exactly three rings
     atoms_in_3_rings = [atom for atom, count in atom_in_rings_count.items() if count == 3]
 
     for atom_idx in atoms_in_3_rings:
@@ -155,9 +155,9 @@ def remove_degree_in_molblock(content):
     return content
 
 
-# 打开.pkl文件
+# Open .pkl file
 with open('./raw_data/train_data_39k.pkl', 'rb') as file:
-    # 加载文件中的对象
+    # Load object from file
     datas = pickle.load(file)
 random.seed(0)
 random.shuffle(datas)
@@ -170,13 +170,13 @@ for data in tqdm(datas):
 
 filtered_datas_r = []
 for data in filtered_datas:  
-    filtered_datas_r.append((copy.deepcopy(data.rdmol),copy.deepcopy(data.smiles)))  #不这样好像没法作为并行的输入
+    filtered_datas_r.append((copy.deepcopy(data.rdmol),copy.deepcopy(data.smiles)))  # Otherwise it doesn't work as parallel input
 
 results_t0 = process_map(run_aug_mol_get_ConfSeq_pair_0, tqdm(filtered_datas_r*40), max_workers = 40)
 
 with open('./processed_data/train_data_39k_ConfSeq_aug_0.txt','w+') as f:
     for i in results_t0:
-        i = i.replace('<180>','<-180>')  #不需要180度
+        i = i.replace('<180>','<-180>')  # Don't need 180 degrees
         f.write(i)
         f.write('\n')
 
@@ -184,7 +184,7 @@ results_t1 = process_map(run_aug_mol_get_ConfSeq_pair_1, tqdm(filtered_datas_r*4
 
 with open('./processed_data/train_data_39k_ConfSeq_aug_1.txt','w+') as f:
     for i in results_t1:
-        i = i.replace('<180>','<-180>')  #不需要180度
+        i = i.replace('<180>','<-180>')  # Don't need 180 degrees
         f.write(i)
         f.write('\n')
 
@@ -193,14 +193,14 @@ results_t2 = process_map(run_aug_mol_get_ConfSeq_pair_2, tqdm(filtered_datas_r*8
 
 with open('./processed_data/train_data_39k_ConfSeq_aug_2.txt','w+') as f:
     for i in results_t2:
-        i = i.replace('<180>','<-180>')  #不需要180度
+        i = i.replace('<180>','<-180>')  # Don't need 180 degrees
         f.write(i)
         f.write('\n')
 
 
-# 打开.pkl文件
+# Open .pkl file
 with open('./raw_data/val_data_5k.pkl', 'rb') as file:
-    # 加载文件中的对象
+    # Load object from file
     datas = pickle.load(file)
 
 random.seed(0)
@@ -214,7 +214,7 @@ for data in tqdm(datas):
 
 filtered_datas_r = []
 for data in filtered_datas:  
-    filtered_datas_r.append((copy.deepcopy(data.rdmol),copy.deepcopy(data.smiles)))  #不这样好像没法作为并行的输入
+    filtered_datas_r.append((copy.deepcopy(data.rdmol),copy.deepcopy(data.smiles)))  # Otherwise it doesn't work as parallel input
 
 results_t4 = process_map(run_aug_mol_get_ConfSeq_pair_0, tqdm(filtered_datas_r), max_workers = 40)
 

@@ -1,7 +1,7 @@
 import sys
 import os
 
-sys.path.append('../')  # 替换为你实际的目录路径
+sys.path.append('../')  # Replace with your actual directory path
 os.environ["CUDA_VISIBLE_DEVICES"] = "7"
 
 from rdkit import Chem
@@ -86,18 +86,18 @@ def move_empty_strings_to_end(lst):
 
 def pad_sequences(sequences, padding_value=0):
     """
-    将序列填充到相同长度。
+    Pad sequences to the same length.
     
-    参数:
-    - sequences: list of lists，每个子列表是一个序列。
-    - padding_value: 填充值，默认是0。
+    Parameters:
+    - sequences: list of lists, each sublist is a sequence.
+    - padding_value: padding value, default is 0.
     
-    返回:
-    - padded_sequences: 填充后的张量。
+    Returns:
+    - padded_sequences: padded tensor.
     """
-    # 找到最大长度
+    # Find the maximum length
     max_length = max(len(seq) for seq in sequences)
-    # 填充序列
+    # Pad sequences
     padded_sequences = [
         seq + [padding_value] * (max_length - len(seq)) if len(seq) < max_length else seq
         for seq in sequences
@@ -145,7 +145,7 @@ config.classifier_dropout = 0.3
 config.num_hidden_layers = 6
 config.static_position_embeddings = True
 
-#####在23号的基础上加了这些
+#####Added these based on the 23rd version
 config.max_position_embeddings = 512
 config.activation_function = 'relu'
 ####
@@ -154,17 +154,17 @@ model = BartForConditionalGeneration(config = config )
 weight_path = './checkpoints/model_epoch_3_175000.pth'
 weight_name = weight_path.replace('./checkpoints/','').replace('.pth','')
 
-checkpoint = torch.load(weight_path, map_location='cpu')  # 使用适当的设备
+checkpoint = torch.load(weight_path, map_location='cpu')  # Use appropriate device
 new_state_dict = OrderedDict()
 for k, v in checkpoint.items():
     if k.startswith('module.'):
-        # 去掉前缀 'module.'
+        # Remove prefix 'module.'
         new_state_dict[k[7:]] = v
     else:
         new_state_dict[k] = v
-# 将权重加载到模型中
+# Load weights into model
 model.load_state_dict(new_state_dict)
-# 如果需要在 GPU 上运行，确保模型被移动到 CUDA 设备
+# If running on GPU, ensure model is moved to CUDA device
 device = torch.device('cuda')
 model = model.to(device)
 
@@ -183,7 +183,7 @@ for temperature in np.arange(2.4, 0.2, -0.2):
     temperature = round(temperature,1)
     
     seed = 42
-    torch.manual_seed(seed)  # 设置 PyTorch 的随机种子
+    torch.manual_seed(seed)  # Set PyTorch random seed
     set_seed(seed)  
     
     count = 0
@@ -218,11 +218,11 @@ for temperature in np.arange(2.4, 0.2, -0.2):
         
         generated_outs = model.generate(input_ids = encoder_input_ids, 
                                         max_length=256,
-                                        num_beams=1,  # 使用beam search
-                                        do_sample=True,  # 启用采样
-                                        eos_token_id=457,  # 设置终止符号，生成到达终止符号时停止
-                                        pad_token_id=458,  # 填充符号的token ID，防止生成填充符号
-                                        early_stopping=True,  # 允许模型在生成时遇到终止符号时提前停止
+                                        num_beams=1,  # Use beam search
+                                        do_sample=True,  # Enable sampling
+                                        eos_token_id=457,  # Set end token, stop generation when end token is reached
+                                        pad_token_id=458,  # Padding token ID, prevent generation of padding tokens
+                                        early_stopping=True,  # Allow model to stop early when end token is encountered
                                         #logits_processor =logits_processors,  # Use custom logits processors
                                         #num_beam_groups  = 10,
                                         top_k = 360,
@@ -230,7 +230,7 @@ for temperature in np.arange(2.4, 0.2, -0.2):
                                         temperature = temperature,
                                         num_return_sequences=1,
                                         return_dict_in_generate=True, 
-                                        output_scores=True)  # 返回5个序列
+                                        output_scores=True)  # Return 5 sequences
     
         input_lengths =  [len(i) for i in id_lis]
     
@@ -269,10 +269,10 @@ for temperature in np.arange(2.4, 0.2, -0.2):
     
     
     with open('./prediction_data/{}_temp_{}_p_score_{}_aug_{}.json'.format(weight_name,temperature,p,aug),'w+') as json_file:
-        json.dump(generated_scores_lis, json_file, indent=4)  # indent 参数美化输出
+        json.dump(generated_scores_lis, json_file, indent=4)  # indent parameter for formatted output
     
     with open('./prediction_data/{}_temp_{}_p_seq_{}_aug_{}.json'.format(weight_name,temperature,p,aug),'w+') as json_file:
-        json.dump(generated_seqs_lis, json_file, indent=4)  # indent 参数美化输出
+        json.dump(generated_seqs_lis, json_file, indent=4)  # indent parameter for formatted output
     
     with open('./prediction_data/{}_temp_{}_p_seq_{}_aug_{}.json'.format(weight_name,temperature,p,aug),'r') as file:
         generated_seqs_lis = json.load(file)

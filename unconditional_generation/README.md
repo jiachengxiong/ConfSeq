@@ -27,7 +27,7 @@ Next, generate the ConfSeq representations with:
 bash scripts/preprocess.sh
 ```
 
-Upon successful execution, the processed dataset will be available in `data/geom_confseq`, which serves as the input for model training and evaluation. Alternatively, you may download the preprocessed dataset directly from [this link](mylink).
+Upon successful execution, the processed dataset will be available in `data/geom_confseq`, which serves as the input for model training and evaluation. Alternatively, you may download the preprocessed dataset directly from [this link](https://1drv.ms/f/c/940c94b59e54c472/EgOVrlM7J2JGqyXerZpYDREBerFk7jMkjWjRsptXBIjb7w?e=DLFaka).
 
 ---
 
@@ -73,7 +73,7 @@ To train the unconditional generation model, run:
 bash scripts/train_bartforcausallm.sh
 ```
 
-Alternatively, you may download a pre-trained model checkpoint from [this link](mylink) and place it in the `checkpoints` directory.
+Alternatively, you may download a pre-trained model checkpoint from [this link](https://1drv.ms/f/c/940c94b59e54c472/EjZcjDariRlJjvuQ8aa4xREBt0y0_ywdUTMz3c5puc6pYQ?e=cd7IN6) and place it in the `checkpoints` directory.
 
 ---
 

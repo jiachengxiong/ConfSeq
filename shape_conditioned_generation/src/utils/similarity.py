@@ -26,11 +26,11 @@ def get_mol(smiles_or_mol):
 def read_similarity(path='./tmp/shaep/similarity.txt', query_num=1000, lib_num=970):
     with open(path, 'r') as f:
         lines = f.readlines()
-    # 提取矩阵
+    # Extract matrix
     data = lines[1].strip().split('\t')[6+query_num:]
-    # 相似度数值化
+    # Similarity numerization
     data = [float(i) if i != 'nan' else 0 for i in data ]
-    # 矩阵
+    # Matrix
     data = np.array(data)
     data.resize(lib_num, query_num)  #(lib_num, query_num)
     return data

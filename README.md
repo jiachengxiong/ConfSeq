@@ -48,7 +48,7 @@ pip install ./shape_conditioned_generation/src/model/pointops
 >
 > If you experience issues installing `pointops`, refer to the [Pointcept issue page](https://github.com/Pointcept/Pointcept/issues) for troubleshooting.
 
-Alternatively, a pre-packaged Conda environment is available [here](mylink) for streamlined installation.
+Alternatively, a pre-packaged Conda environment is available [here](https://1drv.ms/u/c/940c94b59e54c472/EfXEzVb_NeNGpi6csZ0PSnAB5kSEkiqQvTMyhff1BwBmtQ?e=ZnQ8CO) for streamlined installation.
 
 ---
 
@@ -60,13 +60,13 @@ A demonstration notebook illustrating how to convert a 3D molecule to a ConfSeq 
 
 ## 📦 Resources
 
-The datasets and pretrained model checkpoints are hosted at [this link](link). Please download them and place them in the appropriate directories as specified in the `README.md` files of each subdirectory.
+The datasets and pretrained model checkpoints are hosted at [this link](https://1drv.ms/f/c/940c94b59e54c472/EgN2JBqq641Mvp8zVDTM0O0Bu3wdg0YwRFZyPrYfASjBmQ?e=4YEtnZ). Please download them and place them in the appropriate directories as specified in the `README.md` files of each subdirectory.
 
 ---
 
 ## 🚀 Running the Models
 
-The ConfSeq-series models are organized into subdirectories, each corresponding to a specific task described in the paper. Each subdirectory contains a `README.md` with detailed usage instructions.
+The ConfSeq-series models are organized into subdirectories, each corresponding to a specific task described in the paper. Each subdirectory contains a `README.md` with detailed usage instructions. The models are located separately in `conformation_prediction/train_model.py`, `unconditional_generation/src/model/BartForCausalLM.py`, `shape_conditioned_generation/src/model/SurfBart.py`, and `representation_learning/train.py`.
 
 Please refer to these documents to run individual models.
 
