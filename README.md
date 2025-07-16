@@ -66,9 +66,15 @@ The datasets and pretrained model checkpoints are hosted at [this link](https://
 
 ## 🚀 Running the Models
 
-The ConfSeq-series models are organized into subdirectories, each corresponding to a specific task described in the paper. Each subdirectory contains a `README.md` with detailed usage instructions. The models are located separately in `conformation_prediction/train_model.py`, `unconditional_generation/src/model/BartForCausalLM.py`, `shape_conditioned_generation/src/model/SurfBart.py`, and `representation_learning/train.py`.
+The ConfSeq-series models are organized into separate directories according to their specific tasks.
 
-Please refer to these documents to run individual models.
+- **Conformation Prediction**: All related code and data are located in the `/conformation_prediction/` directory.
+- **Unconditional Generation**: All related code and data are located in the `/unconditional_generation/` directory.
+- **Shape-conditioned Generation**: All related code and data are located in the `/shape_conditioned_generation/` directory.
+- **Representation Learning**: All related code and data are located in the `/representation_learning/` directory.
+
+Each directory contains its own `README.md` file with detailed usage instructions.  
+Please refer to the corresponding `README.md` for instructions on how to run each model.
 
 ---
 
