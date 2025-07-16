@@ -58,23 +58,23 @@ A demonstration notebook illustrating how to convert a 3D molecule to a ConfSeq 
 
 ---
 
-## 📦 Resources
-
-The datasets and pretrained model checkpoints are hosted at [this link](https://1drv.ms/f/c/940c94b59e54c472/EgN2JBqq641Mvp8zVDTM0O0Bu3wdg0YwRFZyPrYfASjBmQ?e=4YEtnZ). Please download them and place them in the appropriate directories as specified in the `README.md` files of each subdirectory.
-
----
-
 ## 🚀 Running the Models
 
 The ConfSeq-series models are organized into separate directories according to their specific tasks.
 
-- **Conformation Prediction**: All related code and data are located in the `/conformation_prediction/` directory.
-- **Unconditional Generation**: All related code and data are located in the `/unconditional_generation/` directory.
-- **Shape-conditioned Generation**: All related code and data are located in the `/shape_conditioned_generation/` directory.
-- **Representation Learning**: All related code and data are located in the `/representation_learning/` directory.
+- **Conformation Prediction**: All related files are located in the `/conformation_prediction/` directory.
+- **Unconditional Generation**: All related files are located in the `/unconditional_generation/` directory.
+- **Shape-conditioned Generation**: All related files are located in the `/shape_conditioned_generation/` directory.
+- **Representation Learning**: All related files are located in the `/representation_learning/` directory.
 
 Each directory contains its own `README.md` file with detailed usage instructions.  
 Please refer to the corresponding `README.md` for instructions on how to run each model.
+
+---
+
+## 📦 Resources
+
+The datasets and pretrained model checkpoints are hosted at [this link](https://1drv.ms/f/c/940c94b59e54c472/EgN2JBqq641Mvp8zVDTM0O0Bu3wdg0YwRFZyPrYfASjBmQ?e=4YEtnZ). Please download them and place them in the appropriate directories as specified in the `README.md` files of each subdirectory.
 
 ---
 
