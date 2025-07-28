@@ -2,7 +2,7 @@ import sys
 import os
 
 sys.path.append('../')  # Replace with your actual directory path
-os.environ["CUDA_VISIBLE_DEVICES"] = "7"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 from rdkit import Chem
 from rdkit.Chem import AllChem, rdMolTransforms, rdchem
@@ -115,13 +115,13 @@ def get_conf(para):
     return conf
 
 
-with open("./processed_data/test_data_200_in_smiles_aug_0.json", "r", encoding="utf-8") as json_file:
+with open("./processed_data/25_3_2_test_data_200_in_smiles_aug_0.json", "r", encoding="utf-8") as json_file:
     smiles_in_smiles_dic_0 = json.load(json_file)
 
-with open("./processed_data/test_data_200_in_smiles_aug_1.json", "r", encoding="utf-8") as json_file:
+with open("./processed_data/25_3_2_test_data_200_in_smiles_aug_1.json", "r", encoding="utf-8") as json_file:
     smiles_in_smiles_dic_1 = json.load(json_file)
 
-with open("./processed_data/test_data_200_in_smiles_aug_2.json", "r", encoding="utf-8") as json_file:
+with open("./processed_data/25_3_2_test_data_200_in_smiles_aug_2.json", "r", encoding="utf-8") as json_file:
     smiles_in_smiles_dic_2 = json.load(json_file)
 
 
@@ -268,6 +268,7 @@ for temperature in np.arange(2.4, 0.2, -0.2):
         generated_scores_lis.append(seq_scores)
     
     
+    os.makedirs('./prediction_data', exist_ok=True)
     with open('./prediction_data/{}_temp_{}_p_score_{}_aug_{}.json'.format(weight_name,temperature,p,aug),'w+') as json_file:
         json.dump(generated_scores_lis, json_file, indent=4)  # indent parameter for formatted output
     
@@ -284,7 +285,7 @@ for temperature in np.arange(2.4, 0.2, -0.2):
     for in_smiles,TD_smiles in zip(all_in_smiles_lis,all_seqs_lis):
         para_lis.append((in_smiles,TD_smiles))
     
-    conf_lis = process_map(get_conf, tqdm(para_lis), max_workers = 64)
+    conf_lis = process_map(get_conf, tqdm(para_lis), max_workers = 40)
     
     new_conf_lis = []
     for i in range(len(conf_lis)):

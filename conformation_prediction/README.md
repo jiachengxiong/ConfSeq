@@ -23,7 +23,8 @@ After downloading, place the files inside the `raw_data` folder. The expected fo
 To convert the raw data into ConfSeq-formatted text files, run:
 
 ``` bash
-python process_raw_data.py
+python process_train_and_val_data.py
+python process_test_data.py
 ```
 
 The generated files will be saved in the `processed_data` folder.  Alternatively, you may download the processed results from [this link](https://1drv.ms/f/c/940c94b59e54c472/EjcPXApiXsxHtWg6ovV8IZwBY2WWsa09wmpDJ8d4CmkJIw?e=8BXUqH) and place them in the `processed_data` folder. The expected folder structure is as follows:
@@ -56,7 +57,7 @@ Alternatively, you may download a pre-trained model checkpoint from [this link](
 To perform inference using different sampling temperatures, run:
 
 ```bash
-python infer_and_evaluate_temperature_series.py
+python infer_with_temperature_series.py
 ```
 
 The generated files will be saved in the `prediction_data` folder. Alternatively, you may download the inference results from [this link](https://1drv.ms/f/c/940c94b59e54c472/Eh-lN8-bxjJDhRHiFoGL9AMB4YUaAGKHBcw2IE_Bgz8dxw?e=yTz6OUk) and place them in the `prediction_data` folder. 

@@ -28,7 +28,7 @@ conda activate confseq
 conda install pytorch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 pytorch-cuda=12.4 -c pytorch -c nvidia -y
 
 pip install rdkit==2024.9.3 transformers==4.50 accelerate==1.8.1
-pip install jupyter epam.indigo==1.32.0 SmilesPE==0.0.3 posebusters==0.4.4 timeout_decorator==0.5.0 fcd_torch==1.0.7 easydict==1.13 py3dmol==2.5.1 swanlab==0.6.4 lmdb==1.6.2 scikit-image==0.25.2 matplotlib==3.10.3 seaborn==0.13.2
+pip install jupyter epam.indigo==1.32.0 SmilesPE==0.0.3 posebusters==0.4.4 timeout_decorator==0.5.0 fcd_torch==1.0.7 easydict==1.13 py3dmol==2.5.1 swanlab==0.6.4 lmdb==1.6.2 scikit-image==0.25.2 matplotlib==3.10.3 seaborn==0.13.2 torch_geometric==2.6.1
 
 conda install openbabel -c conda-forge -y
 conda install ninja -y
