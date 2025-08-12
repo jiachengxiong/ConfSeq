@@ -7,7 +7,7 @@ This repository accompanies the paper
 
 ---
 
-## ⚡ Quick Access
+## ⚡ Online Access to ConfSeq-series Models
 
 We provide ready-to-use ConfSeq-series models online at [Sciminer](https://sciminer.protonunfold.com/), including:
 
