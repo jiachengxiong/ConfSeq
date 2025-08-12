@@ -115,13 +115,13 @@ def get_conf(para):
     return conf
 
 
-with open("./processed_data/25_3_2_test_data_200_in_smiles_aug_0.json", "r", encoding="utf-8") as json_file:
+with open("./processed_data/test_data_200_in_smiles_aug_0.json", "r", encoding="utf-8") as json_file:
     smiles_in_smiles_dic_0 = json.load(json_file)
 
-with open("./processed_data/25_3_2_test_data_200_in_smiles_aug_1.json", "r", encoding="utf-8") as json_file:
+with open("./processed_data/test_data_200_in_smiles_aug_1.json", "r", encoding="utf-8") as json_file:
     smiles_in_smiles_dic_1 = json.load(json_file)
 
-with open("./processed_data/25_3_2_test_data_200_in_smiles_aug_2.json", "r", encoding="utf-8") as json_file:
+with open("./processed_data/test_data_200_in_smiles_aug_2.json", "r", encoding="utf-8") as json_file:
     smiles_in_smiles_dic_2 = json.load(json_file)
 
 
