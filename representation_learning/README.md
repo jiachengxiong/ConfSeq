@@ -15,7 +15,7 @@ Additionally, molecular pair similarity data for model training are generated us
 Raw and processed datasets can be downloaded from [this link](https://1drv.ms/f/c/940c94b59e54c472/Ev9je1Q3Y2FMtL6tyvrDkgUBEMDUNuRlVFuydOPFM5mVNw?e=quBnOT).
 
 After downloading, extract the archive and place its contents inside the `data` folder.  
-The expected folder structure is as follows:
+The expected folder structure of this directory is as follows:
 
 ```
 .
@@ -23,12 +23,14 @@ The expected folder structure is as follows:
 ├── infer_for_DUDE.ipynb
 ├── infer_for_PCBA.ipynb
 ├── view_PDB_embdding.ipynb
+├── screen_pubchem.ipynb
 ├── train.py
 ├── data
 │   ├── DUDE
 │   ├── PCBA
 │   ├── PDB
-│   └── Pairwise_molecular_similarity
+│   ├── Pairwise_molecular_similarity
+│   └── pubchem_embeddings
 ├── checkpoints
     └── model_epoch_1.pth
 └── assets
@@ -49,7 +51,7 @@ Alternatively, you may download a pre-trained model checkpoint from [this link](
 ---
 ## 📊 Evaluation
 
-To perform the evaluation, please run the `infer_for_DUDE.ipynb` and `infer_for_PCBA.ipynb` notebooks.
+To perform the evaluation, please run the `infer_for_DUDE.ipynb` and `infer_for_PCBA.ipynb` notebooks. For shape-based virtual screening in pubchem dataset, you can use the `screen_pubchem.ipynb` notebook.
 
 ---
 ## 🎨 Embedding Visualization
