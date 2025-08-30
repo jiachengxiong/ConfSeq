@@ -51,8 +51,9 @@ Alternatively, you may download a pre-trained model checkpoint from [this link](
 ---
 ## 📊 Evaluation
 
-To perform the evaluation, please run the `infer_for_DUDE.ipynb` and `infer_for_PCBA.ipynb` notebooks. For shape-based virtual screening in pubchem dataset, you can use the `screen_pubchem.ipynb` notebook.
-
+To perform the evaluation, please run the `infer_for_DUDE.ipynb` and `infer_for_PCBA.ipynb` notebooks. For shape-based virtual screening in pubchem dataset, you can use the `screen_pubchem.ipynb` notebook. A molecule with 3D conformation should be provided in order to calculate the query embeddings and top-k results along with the corresponding distance will be computed. 
+> [!Note]
+> It could be memory expensive to load the pubchem embeddings, which requires at least 25 GB of RAM. For convenience, you may consider using the online service at [this link](https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Screen)
 ---
 ## 🎨 Embedding Visualization
 To visualize the representations of ligands in the PDB, run `view_PDB_embdding.ipynb` notebooks.
