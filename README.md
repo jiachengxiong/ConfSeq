@@ -46,7 +46,7 @@ pip install oddt==0.7
 pip install ./shape_conditioned_generation/src/model/pointops
 ```
 
-> **NOTE**
+> [!NOTE]
 > If CUDA mismatch occurs, specify your CUDA bin/lib:
 >
 > ```bash
