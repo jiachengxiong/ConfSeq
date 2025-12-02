@@ -1,91 +1,192 @@
-# ConfSeq
+# 🌐 **ConfSeq: Bridging 3D Molecular Structures and AI via a Conformation Description Language**
 
-This repository accompanies the paper
-**“Bridging 3D Molecular Structures and Artificial Intelligence by a Conformation Description Language.”**
+**ConfSeq** introduces a unified language for representing 3D molecular conformations, enabling seamless integration of geometric molecular data with modern sequence-based deep learning architectures.
 
-![Overview](./assets/Figure_1.png)
-
----
-
-## ⚡ Online Access to ConfSeq-series Models
-
-We provide ready-to-use ConfSeq-series models online at [Sciminer](https://sciminer.protonunfold.com/), including:
-
-* **Molecular Conformation Generation**: [ConfSeq-Conf-Gen](https://sciminer.protonunfold.com/utility?tool=Confseq%20Conf%20Gen)
-* **Shape-conditioned Generation**: [ConfSeq-Shape-Gen](https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Gen)
-* **Shape Screening Based on ConfSeq**: [ConfSeq-Shape-Screen](https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Screen)
+<p align="center">
+  <img src="./assets/Figure_1.png" width="720">
+</p>
 
 ---
 
-## 📦 Environment Setup
+# 🔗 **Online Access to Pretrained ConfSeq-series Models**
 
-We strongly recommend creating a dedicated Conda environment to manage dependencies. Execute the following commands to create an environment named `confseq` with Python 3.11 and CUDA 12.6:
+All pretrained ConfSeq models can be accessed directly through **Sciminer**:
+
+| Task                             | Model                  | Link                                                                                                                                               |
+| -------------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **3D Conformation Generation**   | *ConfSeq-Conf-Gen*     | [https://sciminer.protonunfold.com/utility?tool=Confseq%20Conf%20Gen](https://sciminer.protonunfold.com/utility?tool=Confseq%20Conf%20Gen)         |
+| **Shape-conditioned Generation** | *ConfSeq-Shape-Gen*    | [https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Gen](https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Gen)       |
+| **Shape-based Screening**        | *ConfSeq-Shape-Screen* | [https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Screen](https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Screen) |
+
+---
+
+# ⚙️ **Environment Setup**
+
+We recommend using a clean Conda environment. The following creates a CUDA-enabled environment with all required dependencies:
 
 ```bash
-conda create -n confseq python=3.11 -y
+conda create -n confseq python=3.10 -y
 conda activate confseq
 
+# PyTorch + CUDA 12.4
 conda install pytorch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 pytorch-cuda=12.4 -c pytorch -c nvidia -y
 
+# Core libraries
 pip install rdkit==2024.9.3 transformers==4.50 accelerate==1.8.1
-pip install jupyter epam.indigo==1.32.0 SmilesPE==0.0.3 posebusters==0.4.4 timeout_decorator==0.5.0 fcd_torch==1.0.7 easydict==1.13 py3dmol==2.5.1 swanlab==0.6.4 lmdb==1.6.2 scikit-image==0.25.2 matplotlib==3.10.3 seaborn==0.13.2 torch_geometric==2.6.1
+pip install jupyter epam.indigo==1.32.0 SmilesPE==0.0.3 posebusters==0.4.4 timeout_decorator==0.5.0
+pip install fcd_torch easydict py3dmol swanlab lmdb scikit-image matplotlib seaborn
 
+# Geometry-related dependencies
 conda install openbabel -c conda-forge -y
 conda install ninja -y
-
 pip install "git+https://github.com/facebookresearch/pytorch3d.git"
 pip install oddt==0.7
+
+# Install pointops for SurfBART-v2
 pip install ./shape_conditioned_generation/src/model/pointops
 ```
 
-> [!NOTE]
-> If you encounter a CUDA version mismatch, set the following environment variables to match your installed CUDA version:
+> **NOTE**
+> If CUDA mismatch occurs, specify your CUDA bin/lib:
 >
 > ```bash
 > export PATH=/usr/local/cuda-12.9/bin:$PATH
 > export LD_LIBRARY_PATH=/usr/local/cuda-12.9/lib64:$LD_LIBRARY_PATH
 > ```
->
-> If you experience issues installing `pointops`, refer to the [Pointcept issue page](https://github.com/Pointcept/Pointcept/issues) for troubleshooting.
 
-Alternatively, a pre-packaged Conda environment is available [here](https://1drv.ms/u/c/940c94b59e54c472/EfXEzVb_NeNGpi6csZ0PSnAB5kSEkiqQvTMyhff1BwBmtQ?e=ZnQ8CO) for streamlined installation.
+For a pre-built environment with all dependencies, download the Conda environment package **[here](https://1drv.ms/u/c/940c94b59e54c472/EfXEzVb_NeNGpi6csZ0PSnAB5kSEkiqQvTMyhff1BwBmtQ?e=ZnQ8CO)**.
 
 ---
 
-## 📝 Demo
+# 🧪 **Demo Notebook**
 
-A demonstration notebook illustrating how to convert a 3D molecule to a ConfSeq sequence and reconstruct it back is provided in the `demo` directory. The core implementation of the ConfSeq algorithm is located in `demo/ConfSeq.py`.
+A concise tutorial demonstrating ConfSeq encoding and decoding is available in:
 
----
+```
+demo/ConfSeq.ipynb
+```
 
-## 🚀 Running the Models
+The implementation of ConfSeq is contained in:
 
-The ConfSeq-series models are organized into separate directories according to their specific tasks.
-
-- **Conformation Prediction**: All related files are located in the `/conformation_prediction/` directory.
-- **Unconditional Generation**: All related files are located in the `/unconditional_generation/` directory.
-- **Shape-conditioned Generation**: All related files are located in the `/shape_conditioned_generation/` directory.
-- **Representation Learning**: All related files are located in the `/representation_learning/` directory.
-
-Each directory contains a `README.md` file with detailed instructions on how to run the corresponding model.
+```
+demo/ConfSeq.py
+```
 
 ---
 
-## 📦 Resources
+# 📂 **Repository Structure**
 
-The datasets and pretrained model checkpoints are hosted at [this link](https://1drv.ms/f/c/940c94b59e54c472/EgN2JBqq641Mvp8zVDTM0O0Bu3wdg0YwRFZyPrYfASjBmQ?e=4YEtnZ). Please download them and place them in the appropriate directories as specified in the `README.md` files of each subdirectory.
+```
+ConfSeq/
+│
+├── conformation_prediction/      # ConfSeq-Conf-Gen models and scripts
+├── unconditional_generation/     # Unconditional generative models
+├── shape_conditioned_generation/ # SurfBART-v2 for shape-conditioned generation
+├── representation_learning/      # Shape-aware molecular representation learning
+└── demo/                         # ConfSeq demo utilities and notebook
+```
+
+Each subdirectory contains an independent `README.md` with task-specific instructions.
 
 ---
 
-## ⭐ Star History
+# 🚀 **One-click Inference Scripts**
 
-[![Star History Chart](https://api.star-history.com/svg?repos=jiachengxiong/ConfSeq\&type=Date)](https://www.star-history.com/#jiachengxiong/ConfSeq&Date)
+We provide clean, minimal entry points for all ConfSeq-series tasks.
 
 ---
 
-## 📖 Citation
+## **1. Conformation Prediction**
 
-If you find this code helpful for your research, please cite our paper:
+```bash
+cd conformation_prediction
+python run_conf_gen.py \
+  --smiles "CC(F)(C(F)(F)F)C1=CC=CC=C1" \
+  --conf_num 50 \
+  --temperature 2.0 \
+  --top_p 0.96 \
+  --top_k 360 \
+  --device cuda \
+  --seed 42 \
+  --max_length 256 \
+  --out outputs/confs.sdf
+```
+
+---
+
+## **2. Unconditional Molecule Generation**
+
+```bash
+cd unconditional_generation
+python run_uncond_gen.py \
+  --save_path ./results/confseq_uncond_demo \
+  --num_samples 1000 \
+  --sample_times 3 \
+  --batch_size 64 \
+  --scale_times 4 \
+  --upscale_temp 1.0 \
+  --downscale_temp 0.6 \
+  --group_split 99 \
+  --device cuda \
+  --chunksize 16 \
+  --num_workers 4
+```
+
+---
+
+## **3. Shape-conditioned Generation**
+
+```bash
+cd shape_conditioned_generation
+python run_shape_gen.py \
+  --smiles "CC(=O)Oc1ccccc1C(=O)O" \
+  --output-dir ./results/shape_gen \
+  --seed 42 \
+  --atom-token-temp 1.2 \
+  --angle-token-temp 1.2
+```
+
+---
+
+## **4. Shape-based Screening**
+
+Large embedding files must be downloaded manually from
+👉 [https://1drv.ms/f/c/940c94b59e54c472/Ev9je1Q3Y2FMtL6tyvrDkgUBEMDUNuRlVFuydOPFM5mVNw?e=quBnOT](https://1drv.ms/f/c/940c94b59e54c472/Ev9je1Q3Y2FMtL6tyvrDkgUBEMDUNuRlVFuydOPFM5mVNw?e=quBnOT)
+
+```bash
+cd representation_learning
+python run_shape_screen.py \
+  --smiles "CC(=O)Oc1ccccc1C(=O)O" \
+  --db pubchem \
+  --topk 50 \
+  --out-prefix results/pubchem_aspirin
+```
+
+---
+
+# 📦 **Datasets & Checkpoints**
+
+All datasets, pretrained weights, and FAISS indices are available at:
+
+👉 [https://1drv.ms/f/c/940c94b59e54c472/EgN2JBqq641Mvp8zVDTM0O0Bu3wdg0YwRFZyPrYfASjBmQ?e=4YEtnZ](https://1drv.ms/f/c/940c94b59e54c472/EgN2JBqq641Mvp8zVDTM0O0Bu3wdg0YwRFZyPrYfASjBmQ?e=4YEtnZ)
+
+Please follow the instructions in each task directory regarding placement.
+
+---
+
+# ⭐ **Star History**
+
+<p align="center">
+  <a href="https://www.star-history.com/#jiachengxiong/ConfSeq&Date">
+    <img src="https://api.star-history.com/svg?repos=jiachengxiong/ConfSeq&type=Date" width="600">
+  </a>
+</p>
+
+---
+
+# 📝 **Citation**
+
+If this repository contributes to your work, please cite:
 
 ```bibtex
 @article{Xiong2025.05.07.652440,
@@ -94,10 +195,15 @@ If you find this code helpful for your research, please cite our paper:
   elocation-id = {2025.05.07.652440},
   year = {2025},
   doi = {10.1101/2025.05.07.652440},
-  publisher = {Cold Spring Harbor Laboratory},
-  URL = {https://www.biorxiv.org/content/early/2025/05/12/2025.05.07.652440},
-  eprint = {https://www.biorxiv.org/content/early/2025/05/12/2025.05.07.652440.full.pdf},
   journal = {bioRxiv}
 }
 ```
 
+---
+
+# 📬 **Feedback & Issues**
+
+For questions, feature requests, and practical feedback, please open an issue on GitHub.
+Pull requests are welcome.
+
+---

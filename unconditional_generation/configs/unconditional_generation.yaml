@@ -1,7 +1,7 @@
 save_path: 'results/sample0'
 sample_times: 3
 seed: 42
-model_path: 'checkpoints/checkpoint-165000'
+model_path: 'checkpoints/bartforcausallm-geom-aug5-angles-0306/checkpoint-165000'
 num_samples: 10000
 scale_times: 1
 batch_size: 100
