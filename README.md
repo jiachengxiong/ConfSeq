@@ -1,4 +1,4 @@
-# 🌐 **ConfSeq: Bridging 3D Molecular Structures and AI via a Conformation Description Language**
+#**ConfSeq: Bridging 3D Molecular Structures and AI via a Conformation Description Language**
 
 **ConfSeq** introduces a unified language for representing 3D molecular conformations, enabling seamless integration of geometric molecular data with modern sequence-based deep learning architectures.
 
