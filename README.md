@@ -101,15 +101,16 @@ We provide clean, minimal entry points for all ConfSeq-series tasks.
 ```bash
 cd conformation_prediction
 python run_conf_gen.py \
-  --smiles "CC(F)(C(F)(F)F)C1=CC=CC=C1" \
-  --conf_num 50 \
-  --temperature 2.0 \
-  --top_p 0.96 \
-  --top_k 360 \
-  --device cuda \
-  --seed 42 \
-  --max_length 256 \
-  --out outputs/confs.sdf
+  --smiles "CC(F)(C(F)(F)F)C1=CC=CC=C1" \   # Input SMILES string for the target molecule
+  --conf_num 50 \                          # Number of conformations to generate
+  --temperature 2.0 \                      # Sampling temperature for token generation
+  --top_p 0.96 \                           # Nucleus (top-p) sampling threshold
+  --top_k 360 \                            # Top-k sampling cutoff
+  --device cuda \                          # Computation device: cuda or cpu
+  --seed 42 \                              # Random seed for reproducibility
+  --max_length 256 \                       # Maximum sequence length for generation
+  --out outputs/confs.sdf                  # Output SDF file path for generated conformers
+
 ```
 
 ---
@@ -119,17 +120,17 @@ python run_conf_gen.py \
 ```bash
 cd unconditional_generation
 python run_uncond_gen.py \
-  --save_path ./results/confseq_uncond_demo \
-  --num_samples 1000 \
-  --sample_times 3 \
-  --batch_size 64 \
-  --scale_times 4 \
-  --upscale_temp 1.0 \
-  --downscale_temp 0.6 \
-  --group_split 99 \
-  --device cuda \
-  --chunksize 16 \
-  --num_workers 4
+  --save_path ./results/confseq_uncond_demo \  # Directory to save generated molecules and logs
+  --num_samples 1000 \                         # Total number of molecules to generate
+  --sample_times 3 \                           # Number of sampling repetitions
+  --batch_size 64 \                            # Batch size for generation
+  --scale_times 4 \                            # Token scaling repetition factor
+  --upscale_temp 1.0 \                         # Temperature for upscaling token groups (angle/geometry tokens)
+  --downscale_temp 0.6 \                       # Temperature for downscaling token groups (atom tokens)
+  --device cuda \                              # Computation device: cuda or cpu
+  --chunksize 16 \                             # Number of samples processed per chunk
+  --num_workers 4                              # Number of parallel worker processes
+
 ```
 
 ---
@@ -139,11 +140,12 @@ python run_uncond_gen.py \
 ```bash
 cd shape_conditioned_generation
 python run_shape_gen.py \
-  --smiles "CC(=O)Oc1ccccc1C(=O)O" \
-  --output-dir ./results/shape_gen \
-  --seed 42 \
-  --atom-token-temp 1.2 \
-  --angle-token-temp 1.2
+  --smiles "CC(=O)Oc1ccccc1C(=O)O" \     # Input SMILES string for shape conditioning
+  --output-dir ./results/shape_gen \     # Output directory for generated molecules
+  --seed 42 \                            # Random seed for reproducibility
+  --atom-token-temp 1.2 \                # Sampling temperature for atom tokens
+  --angle-token-temp 1.2                 # Sampling temperature for angle/geometry tokens
+
 ```
 
 ---
@@ -151,15 +153,16 @@ python run_shape_gen.py \
 ## **4. Shape-based Screening**
 
 Large embedding files must be downloaded manually from
-👉 [https://1drv.ms/f/c/940c94b59e54c472/Ev9je1Q3Y2FMtL6tyvrDkgUBEMDUNuRlVFuydOPFM5mVNw?e=quBnOT](https://1drv.ms/f/c/940c94b59e54c472/Ev9je1Q3Y2FMtL6tyvrDkgUBEMDUNuRlVFuydOPFM5mVNw?e=quBnOT)
+👉 [https://1drv.ms/f/c/940c94b59e54c472/Ev9je1Q3Y2FMtL6tyvrDkgUBEMDUNuRlVFuydOPFM5mVNw?e=quBnOT](https://1drv.ms/f/c/940c94b59e54c472/Ev9je1Q3Y2FMtL6tyvrDkgUBEMDUNuRlVFuydOPFM5mVNw?e=quBnOT) or follow `README.md` in `representation_learning/` directory to prepare from scratch.
 
 ```bash
 cd representation_learning
 python run_shape_screen.py \
-  --smiles "CC(=O)Oc1ccccc1C(=O)O" \
-  --db pubchem \
-  --topk 50 \
-  --out-prefix results/pubchem_aspirin
+  --smiles "CC(=O)Oc1ccccc1C(=O)O" \   # Query molecule SMILES
+  --db pubchem \                       # Target database for screening (e.g., pubchem, zinc)
+  --topk 50 \                          # Number of nearest neighbors to retrieve
+  --out-prefix results/pubchem_aspirin # Output file prefix for screening results
+
 ```
 
 ---
