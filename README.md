@@ -14,9 +14,9 @@ All pretrained ConfSeq models can be accessed directly through **Sciminer**:
 
 | Task                             | Model                  | Link                                                                                                                                               |
 | -------------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **3D Conformation Generation**   | *ConfSeq-Conf-Gen*     | [https://sciminer.protonunfold.com/utility?tool=Confseq%20Conf%20Gen](https://sciminer.protonunfold.com/utility?tool=Confseq-Conf-Gen)         |
-| **Shape-conditioned Generation** | *ConfSeq-Shape-Gen*    | [https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Gen](https://sciminer.protonunfold.com/utility?tool=ConfSeq-Shape-Gen)       |
-| **Shape-based Screening**        | *ConfSeq-Shape-Screen* | [https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Screen](https://sciminer.protonunfold.com/utility?tool=ConfSeq-Shape-Screen) |
+| **3D Conformation Generation**   | *ConfSeq-Conf-Gen*     | [https://sciminer.protonunfold.com/utility?tool=Confseq-Conf-Gen](https://sciminer.protonunfold.com/utility?tool=Confseq-Conf-Gen)         |
+| **Shape-conditioned Generation** | *ConfSeq-Shape-Gen*    | [https://sciminer.protonunfold.com/utility?tool=ConfSeq-Shape-Gen](https://sciminer.protonunfold.com/utility?tool=ConfSeq-Shape-Gen)       |
+| **Shape-based Screening**        | *ConfSeq-Shape-Screen* | [https://sciminer.protonunfold.com/utility?tool=ConfSeq-Shape-Screen](https://sciminer.protonunfold.com/utility?tool=ConfSeq-Shape-Screen) |
 
 ---
 
