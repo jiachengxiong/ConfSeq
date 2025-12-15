@@ -634,7 +634,7 @@ def get_p_chiral_mol_3d(smiles,p_chiral_dic,is_op = True):
     # Generate 3D conformation
     params = AllChem.ETKDG()
     #params = AllChem.ETKDGv3()
-    #params.randomSeed = 0  # Set random seed
+    params.randomSeed = 0  # Set random seed
     
     # Generate 3D conformation
     AllChem.EmbedMolecule(mol_with_h, params)
