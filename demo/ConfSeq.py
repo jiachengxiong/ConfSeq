@@ -280,11 +280,11 @@ def get_p_chiral_dic(ran_mol):
 
         #2025.3.1 supplement, three atoms on N form a plane
         neibors = [i.GetIsotope() for i in atom.GetNeighbors()]
-        if atom.GetSymbol() == "N" and len(set(neibors)) == 3 and str(atom.GetChiralTag()) == 'CHI_UNSPECIFIED' and atom.GetChiralTag() == Chem.rdchem.HybridizationType.SP3:
-            if random.random() > 0.5:
-                p_chiral_dic[atom.GetIdx()] = Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CW
-            else:
-                p_chiral_dic[atom.GetIdx()] = Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CCW     
+        #if atom.GetSymbol() == "N" and len(set(neibors)) == 3 and str(atom.GetChiralTag()) == 'CHI_UNSPECIFIED' and atom.GetChiralTag() == Chem.rdchem.HybridizationType.SP3:
+            #if random.random() > 0.5:
+                #p_chiral_dic[atom.GetIdx()] = Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CW
+            #else:
+                #p_chiral_dic[atom.GetIdx()] = Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CCW     
 
     return p_chiral_dic
 
