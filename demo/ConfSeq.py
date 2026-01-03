@@ -984,6 +984,14 @@ def get_mol_from_ConfSeq_pair(in_smiles,TD_smiles,is_op = True):
     
     ring_mol = emol.GetMol()
 
+    ############################2025_11_3 add for Isotope
+    mol_tmp = Chem.MolFromSmiles(in_smiles.replace(' ', ''))
+    isotope_dict = {atom.GetIdx(): atom.GetIsotope() for atom in mol_tmp.GetAtoms()}
+    #print(isotope_dict)
+    for idx, iso in isotope_dict.items():
+        ring_mol.GetAtomWithIdx(idx).SetIsotope(iso)
+    ##########################
+
     #ring_mol,unapplied_dihedrals = apply_dihedrals(ring_mol,dihedral_list[:])
 
     return ring_mol
