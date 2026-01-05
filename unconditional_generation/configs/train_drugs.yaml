@@ -22,7 +22,7 @@ model:
 
 train:
   resume_path: null
-  output_dir: './checkpoints/test'  
+  output_dir: './checkpoints/bartforcausallm-geom-aug5-angles-0306'  
   overwrite_output_dir: True
   num_train_epochs: 20
   per_device_train_batch_size: 512

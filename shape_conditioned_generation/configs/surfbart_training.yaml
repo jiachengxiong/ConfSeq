@@ -1,7 +1,7 @@
 data:
-  data_dir: 'data/pointcloud_train_samples1024_std2x_aug2x_merge_lmdb'
+  data_dir: 'data/pointcloud_train_samples1024_std1x_aug1x_merge_lmdb'
   train_smiles_dir: 'data/MOSES/MOSES_train_smiles.pkl'
-  use_smiles: True  # Whether to use SMILES data
+  use_smiles: False  # Whether to use SMILES data
   num_workers: 40  # Number of workers for data loading
 
 model:
@@ -33,7 +33,7 @@ model:
     num_return_sequences: 50
 
 train:
-  output_dir: "./checkpoints/conditional/shape-geom-smiles-0520"  # TODO: Directory to save model and checkpoints
+  output_dir: "./checkpoints/surfbartv2-sample1024-merge-angles-0421"  # TODO: Directory to save model and checkpoints
   resume_path: null
   overwrite_output_dir: true  # Whether to overwrite existing outputs
   num_train_epochs: 50  # Total number of training epochs
