@@ -1,4 +1,4 @@
-# ConfSeq: Bridging 3D Molecular Structures and Artificial Intelligence by a Conformation Description Language
+# ConfSeq: Bridging three-dimensional molecular structures and artificial intelligence with a conformation description language
 
 **ConfSeq** introduces a unified language for representing 3D molecular conformations, enabling seamless integration of geometric molecular data with modern sequence-based deep learning architectures.
 
@@ -192,13 +192,17 @@ Please follow the instructions in each task directory regarding placement.
 If this repository contributes to your work, please cite:
 
 ```bibtex
-@article{Xiong2025.05.07.652440,
-  author = {Xiong, Jiacheng and Shi, Yuqi and Zhang, Wei and Zhang, Runze and Chen, Zhiyi and Zeng, Chuanlong and Jiang, Xun and Cao, Duanhua and Xiong, Zhaoping and Zheng, Mingyue},
-  title = {Bridging 3D Molecular Structures and Artificial Intelligence by a Conformation Description Language},
-  elocation-id = {2025.05.07.652440},
-  year = {2025},
-  doi = {10.1101/2025.05.07.652440},
-  journal = {bioRxiv}
+@article{xiong_bridging_2026,
+	title = {Bridging three-dimensional molecular structures and artificial intelligence with a conformation description language},
+	issn = {2522-5839},
+	url = {https://www.nature.com/articles/s42256-026-01250-8},
+	doi = {10.1038/s42256-026-01250-8},
+	language = {en},
+	urldate = {2026-06-12},
+	journal = {Nature Machine Intelligence},
+	author = {Xiong, Jiacheng and Shi, Yuqi and Wu, Min and Shao, Panpan and Wang, Zhaokun and Zhang, Wei and Zhang, Runze and Chen, Zhiyi and Zeng, Chuanlong and Jiang, Xun and Cao, Duanhua and Xiong, Zhaoping and Fu, Zunyun and Zhang, Sulin and Zheng, Mingyue},
+	month = jun,
+	year = {2026},
 }
 ```
 
