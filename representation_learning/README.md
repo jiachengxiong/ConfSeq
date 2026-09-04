@@ -3,6 +3,12 @@
 This directory contains the code and configuration files for the 3D molecular representation learning module of **ConfSeq**.
 ![Overview](./assets/overview.png)
 
+## Correction to Fig. 6b
+
+Due to a printing issue introduced during publication, the structures of **510A4** and **Compound 13** in Fig. 6b of the original article were not displayed accurately. The corrected structures are shown below.
+
+![Corrected structures for Fig. 6b](./assets/fig6b_corrected_structures.png)
+
 > [!Note]
 > Ensure all commands below are executed inside the `confseq` Conda environment, with your working directory set to `representation_learning`.
 
@@ -126,7 +132,7 @@ This produces a `[N, 256]` embedding matrix aligned with the input CSV rows.
 To perform the evaluation, please run the `infer_for_DUDE.ipynb` and `infer_for_PCBA.ipynb` notebooks. For shape-based virtual screening in pubchem dataset, you can use the `screen_pubchem.ipynb` notebook. A molecule with 3D conformation should be provided in order to calculate the query embeddings and top-k results along with the corresponding distance will be computed.  
 
 > [!Note]
-> It could be memory expensive to load the pubchem embeddings, which requires at least 25 GB of RAM. For convenience, you may consider using the online service at [this link](https://sciminer.protonunfold.com/utility?tool=ConfSeq%20Shape%20Screen)
+> It could be memory expensive to load the pubchem embeddings, which requires at least 25 GB of RAM. For convenience, you may consider using the online service at [this link](https://sciminer.tech/utility?tool=ConfSeq-Shape-Screen)
 
 ---
 
